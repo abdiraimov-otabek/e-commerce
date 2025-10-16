@@ -64,16 +64,12 @@ class TestPasswordHelpers:
         password = "test12345!"
         hashed = hash_password(password)
 
-        with pytest.raises(
-            ValueError, match="Password and hash cannot be empty"
-        ):
+        with pytest.raises(ValueError, match="Password and hash cannot be empty"):
             verify_password("", hashed)
 
     def test_verify_empty_hash(self) -> None:
         """Test verification with empty hash."""
-        with pytest.raises(
-            ValueError, match="Password and hash cannot be empty"
-        ):
+        with pytest.raises(ValueError, match="Password and hash cannot be empty"):
             verify_password("test12345!", "")
 
     def test_verify_malformed_hash(self) -> None:

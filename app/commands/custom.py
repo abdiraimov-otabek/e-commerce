@@ -162,9 +162,7 @@ def metadata() -> None:
     """
     data = get_data()
 
-    data["this_year"] = (
-        datetime.datetime.now(tz=datetime.timezone.utc).today().year
-    )
+    data["this_year"] = datetime.datetime.now(tz=datetime.timezone.utc).today().year
 
     rprint("\nYou have entered the following data:")
     rprint(f"[green]Title       : [/green]{data['title']}")

@@ -13,7 +13,7 @@ from pydantic import SecretStr
 from app.config.settings import get_settings
 
 if TYPE_CHECKING:  # pragma: no cover
-    from app.schemas.email import EmailSchema, EmailTemplateSchema
+    from app.schemas.email_schema import EmailSchema, EmailTemplateSchema
 
 
 class EmailManager:
@@ -39,7 +39,7 @@ class EmailManager:
             SUPPRESS_SEND=1 if suppress_send else 0,
         )
 
-    async def simple_send(self, email_data: "EmailSchema") -> JSONResponse:
+    async def simple_send(self, email_data: EmailSchema) -> JSONResponse:
         """Send a plain email with a subject and message."""
         message = MessageSchema(
             subject=email_data.subject,
@@ -56,7 +56,7 @@ class EmailManager:
         )
 
     def background_send(
-        self, backgroundtasks: BackgroundTasks, email_data: "EmailSchema"
+        self, backgroundtasks: BackgroundTasks, email_data: EmailSchema
     ) -> None:
         """Send an email in the background."""
         message = MessageSchema(
@@ -70,7 +70,7 @@ class EmailManager:
         backgroundtasks.add_task(fm.send_message, message)
 
     def template_send(
-        self, backgroundtasks: BackgroundTasks, email_data: "EmailTemplateSchema"
+        self, backgroundtasks: BackgroundTasks, email_data: EmailTemplateSchema
     ) -> None:
         """Send an email using a Jinja Template."""
         message = MessageSchema(

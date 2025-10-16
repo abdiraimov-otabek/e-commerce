@@ -55,9 +55,7 @@ def get_api_details() -> tuple[str, str, list[dict[str, str]]]:
             authors = [authors]
 
     except KeyError:
-        logger.error(
-            "Missing name/description or authors in the pyproject.toml file"
-        )
+        logger.error("Missing name/description or authors in the pyproject.toml file")
         sys.exit(2)
 
     except OSError as exc:

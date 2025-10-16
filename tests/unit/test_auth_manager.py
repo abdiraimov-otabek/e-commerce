@@ -48,9 +48,7 @@ class TestAuthManager:
 
     def test_encode_token_bad_data(self) -> None:
         """Test the encode_token method with bad data."""
-        with pytest.raises(
-            HTTPException, match=ResponseMessages.CANT_GENERATE_JWT
-        ):
+        with pytest.raises(HTTPException, match=ResponseMessages.CANT_GENERATE_JWT):
             AuthManager.encode_token("bad_data")  # type: ignore
 
     def test_encode_refresh_token(self) -> None:
@@ -74,9 +72,7 @@ class TestAuthManager:
 
     def test_encode_refresh_token_bad_data(self) -> None:
         """Test the encode_refresh_token method with bad data."""
-        with pytest.raises(
-            HTTPException, match=ResponseMessages.CANT_GENERATE_REFRESH
-        ):
+        with pytest.raises(HTTPException, match=ResponseMessages.CANT_GENERATE_REFRESH):
             AuthManager.encode_refresh_token("bad_data")  # type: ignore
 
     def test_encode_verify_token(self) -> None:
@@ -101,9 +97,7 @@ class TestAuthManager:
 
     def test_encode_verify_token_bad_data(self) -> None:
         """Test the encode_verify_token method with bad data."""
-        with pytest.raises(
-            HTTPException, match=ResponseMessages.CANT_GENERATE_VERIFY
-        ):
+        with pytest.raises(HTTPException, match=ResponseMessages.CANT_GENERATE_VERIFY):
             AuthManager.encode_verify_token("bad_data")  # type: ignore
 
     # ------------------------------------------------------------------------ #
@@ -159,9 +153,7 @@ class TestAuthManager:
         )
 
         with pytest.raises(HTTPException) as exc_info:
-            await AuthManager.refresh(
-                TokenRefreshRequest(refresh=wrong_token), test_db
-            )
+            await AuthManager.refresh(TokenRefreshRequest(refresh=wrong_token), test_db)
         assert exc_info.value.status_code == status.HTTP_401_UNAUTHORIZED
         assert exc_info.value.detail == ResponseMessages.INVALID_TOKEN
 

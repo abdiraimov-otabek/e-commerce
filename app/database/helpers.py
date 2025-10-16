@@ -58,16 +58,12 @@ def verify_password(password: str, hashed_password: str) -> bool:
         raise ValueError(error_invalid) from exc
 
 
-async def get_user_by_id_(
-    user_id: int, session: AsyncSession
-) -> Optional[User]:
+async def get_user_by_id_(user_id: int, session: AsyncSession) -> Optional[User]:
     """Return a user by ID."""
     return await session.get(User, user_id)
 
 
-async def get_user_by_email_(
-    email: str, session: AsyncSession
-) -> Optional[User]:
+async def get_user_by_email_(email: str, session: AsyncSession) -> Optional[User]:
     """Return a user by email."""
     result = await session.execute(select(User).where(User.email == email))
     return result.scalar_one_or_none()
@@ -83,9 +79,7 @@ async def add_new_user_(
     user_data: dict[str, Any], session: AsyncSession
 ) -> Optional[User]:
     """Add a new user to the database."""
-    result = await session.execute(
-        insert(User).values(user_data).returning(User)
-    )
+    result = await session.execute(insert(User).values(user_data).returning(User))
     return result.scalar_one()
 
 
@@ -108,10 +102,7 @@ async def update_api_key_(
 ) -> Optional[ApiKey]:
     """Update an API key in the database."""
     result = await session.execute(
-        update(ApiKey)
-        .where(ApiKey.id == key_id)
-        .values(update_data)
-        .returning(ApiKey)
+        update(ApiKey).where(ApiKey.id == key_id).values(update_data).returning(ApiKey)
     )
     api_key = result.scalar_one_or_none()
     if api_key:
@@ -119,9 +110,7 @@ async def update_api_key_(
     return api_key
 
 
-async def get_api_key_by_id_(
-    key_id: UUID, session: AsyncSession
-) -> Optional[ApiKey]:
+async def get_api_key_by_id_(key_id: UUID, session: AsyncSession) -> Optional[ApiKey]:
     """Return an API key by ID."""
     return await session.get(ApiKey, key_id)
 
@@ -134,11 +123,7 @@ async def get_api_key_by_hash_(
     return result.scalar_one_or_none()
 
 
-async def get_user_api_keys_(
-    user_id: int, session: AsyncSession
-) -> Sequence[ApiKey]:
+async def get_user_api_keys_(user_id: int, session: AsyncSession) -> Sequence[ApiKey]:
     """Return all API keys for a user."""
-    result = await session.execute(
-        select(ApiKey).where(ApiKey.user_id == user_id)
-    )
+    result = await session.execute(select(ApiKey).where(ApiKey.user_id == user_id))
     return result.scalars().all()

@@ -21,24 +21,18 @@ class TestLifespan:
         """Ensure the lifespan function runs without errors."""
         app = FastAPI()
         mock_session = mocker.patch(self.mock_session)
-        mock_connection = (
-            mock_session.return_value.__aenter__.return_value.connection
-        )
+        mock_connection = mock_session.return_value.__aenter__.return_value.connection
         mock_connection.return_value = None
         async with lifespan(app):
             pass  # NOSONAR
         mock_session.assert_called_once()
         mock_session.return_value.__aenter__.return_value.connection.assert_called_once()
 
-    async def test_lifespan_prints_informational_message(
-        self, caplog, mocker
-    ) -> None:
+    async def test_lifespan_prints_informational_message(self, caplog, mocker) -> None:
         """Ensure the lifespan function prints an informational message."""
         app = FastAPI()
         mock_session = mocker.patch(self.mock_session)
-        mock_connection = (
-            mock_session.return_value.__aenter__.return_value.connection
-        )
+        mock_connection = mock_session.return_value.__aenter__.return_value.connection
         mock_connection.return_value = None
 
         caplog.set_level(logging.INFO)
@@ -46,9 +40,7 @@ class TestLifespan:
         async with lifespan(app):
             pass  # NOSONAR
 
-        log_messages = [
-            (record.levelname, record.message) for record in caplog.records
-        ]
+        log_messages = [(record.levelname, record.message) for record in caplog.records]
 
         assert ("INFO", "Database configuration Tested.") in log_messages
 
@@ -56,16 +48,12 @@ class TestLifespan:
         """Ensure the lifespan function yields control to the caller."""
         app = FastAPI()
         mock_session = mocker.patch(self.mock_session)
-        mock_connection = (
-            mock_session.return_value.__aenter__.return_value.connection
-        )
+        mock_connection = mock_session.return_value.__aenter__.return_value.connection
         mock_connection.return_value = None
         async with lifespan(app) as result:
             assert result is None
 
-    async def test_lifespan_raises_sqlachemy_error(
-        self, caplog, mocker
-    ) -> None:
+    async def test_lifespan_raises_sqlachemy_error(self, caplog, mocker) -> None:
         """Ensure the lifespan function prints an error if fails."""
         app = FastAPI()
         mock_session = mocker.patch(self.mock_session)
@@ -76,9 +64,7 @@ class TestLifespan:
         async with lifespan(app):
             pass  # NOSONAR
 
-        log_messages = [
-            (record.levelname, record.message) for record in caplog.records
-        ]
+        log_messages = [(record.levelname, record.message) for record in caplog.records]
 
         assert any(
             record.levelname == "ERROR"

@@ -19,9 +19,9 @@ from app.database.helpers import (
     verify_password,
 )
 from app.managers.auth import AuthManager
-from app.managers.email import EmailManager
+from app.managers.email_manager import EmailManager
 from app.models.user import User
-from app.schemas.email import EmailTemplateSchema
+from app.schemas.email_schema import EmailTemplateSchema
 from app.schemas.request.user import SearchField
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -82,9 +82,7 @@ class UserManager:
 
         # make sure relevant fields are not empty
         if not all(user_data.values()):
-            raise HTTPException(
-                status.HTTP_400_BAD_REQUEST, ErrorMessages.EMPTY_FIELDS
-            )
+            raise HTTPException(status.HTTP_400_BAD_REQUEST, ErrorMessages.EMPTY_FIELDS)
 
         # create a new dictionary to return, otherwise the original is modified
         # and can cause random testing issues
@@ -135,12 +133,8 @@ class UserManager:
                         "application": f"{get_settings().api_title}",
                         "user": new_user["email"],
                         "base_url": get_settings().base_url,
-                        "name": (
-                            f"{new_user['first_name']}{new_user['last_name']}"
-                        ),
-                        "verification": AuthManager.encode_verify_token(
-                            user_do
-                        ),
+                        "name": (f"{new_user['first_name']}{new_user['last_name']}"),
+                        "verification": AuthManager.encode_verify_token(user_do),
                     },
                     template_name="welcome.html",
                 ),
@@ -161,9 +155,7 @@ class UserManager:
         try:
             if (
                 not user_do
-                or not verify_password(
-                    user_data["password"], str(user_do.password)
-                )
+                or not verify_password(user_data["password"], str(user_do.password))
                 or bool(user_do.banned)
             ):
                 raise HTTPException(
@@ -176,9 +168,7 @@ class UserManager:
             ) from err
 
         if not bool(user_do.verified):
-            raise HTTPException(
-                status.HTTP_400_BAD_REQUEST, ErrorMessages.NOT_VERIFIED
-            )
+            raise HTTPException(status.HTTP_400_BAD_REQUEST, ErrorMessages.NOT_VERIFIED)
 
         token = AuthManager.encode_token(user_do)
         refresh = AuthManager.encode_refresh_token(user_do)
@@ -190,9 +180,7 @@ class UserManager:
         """Delete the User with specified ID."""
         check_user = await get_user_by_id_(user_id, session)
         if not check_user:
-            raise HTTPException(
-                status.HTTP_404_NOT_FOUND, ErrorMessages.USER_INVALID
-            )
+            raise HTTPException(status.HTTP_404_NOT_FOUND, ErrorMessages.USER_INVALID)
         await session.execute(delete(User).where(User.id == user_id))
 
     @staticmethod
@@ -205,9 +193,7 @@ class UserManager:
         user = await UserManager.get_user_by_id(user_id, session)
 
         if not user:
-            raise HTTPException(
-                status.HTTP_404_NOT_FOUND, ErrorMessages.USER_NOT_FOUND
-            )
+            raise HTTPException(status.HTTP_404_NOT_FOUND, ErrorMessages.USER_NOT_FOUND)
 
         try:
             # Hash password if provided
@@ -245,9 +231,7 @@ class UserManager:
         """Change the specified user's Password."""
         check_user = await get_user_by_id_(user_id, session)
         if not check_user:
-            raise HTTPException(
-                status.HTTP_404_NOT_FOUND, ErrorMessages.USER_INVALID
-            )
+            raise HTTPException(status.HTTP_404_NOT_FOUND, ErrorMessages.USER_INVALID)
         try:
             hashed_password = hash_password(user_data.password)
         except ValueError as exc:
@@ -257,9 +241,7 @@ class UserManager:
             ) from exc
 
         await session.execute(
-            update(User)
-            .where(User.id == user_id)
-            .values(password=hashed_password)
+            update(User).where(User.id == user_id).values(password=hashed_password)
         )
 
     @staticmethod
@@ -277,9 +259,7 @@ class UserManager:
             )
         check_user = await get_user_by_id_(user_id, session)
         if not check_user:
-            raise HTTPException(
-                status.HTTP_404_NOT_FOUND, ErrorMessages.USER_INVALID
-            )
+            raise HTTPException(status.HTTP_404_NOT_FOUND, ErrorMessages.USER_INVALID)
         if bool(check_user.banned) == banned:
             raise HTTPException(
                 status.HTTP_400_BAD_REQUEST,
@@ -290,13 +270,9 @@ class UserManager:
         )
 
     @staticmethod
-    async def change_role(
-        role: RoleType, user_id: int, session: AsyncSession
-    ) -> None:
+    async def change_role(role: RoleType, user_id: int, session: AsyncSession) -> None:
         """Change the specified user's Role."""
-        await session.execute(
-            update(User).where(User.id == user_id).values(role=role)
-        )
+        await session.execute(update(User).where(User.id == user_id).values(role=role))
 
     @staticmethod
     async def get_all_users(session: AsyncSession) -> Sequence[User]:
@@ -308,9 +284,7 @@ class UserManager:
         """Return one user by ID."""
         user = await session.get(User, user_id)
         if not user:
-            raise HTTPException(
-                status.HTTP_404_NOT_FOUND, ErrorMessages.USER_INVALID
-            )
+            raise HTTPException(status.HTTP_404_NOT_FOUND, ErrorMessages.USER_INVALID)
         return user
 
     @staticmethod
@@ -318,9 +292,7 @@ class UserManager:
         """Return one user by Email."""
         user = await get_user_by_email_(email, session)
         if not user:
-            raise HTTPException(
-                status.HTTP_404_NOT_FOUND, ErrorMessages.USER_INVALID
-            )
+            raise HTTPException(status.HTTP_404_NOT_FOUND, ErrorMessages.USER_INVALID)
         return user
 
     @staticmethod

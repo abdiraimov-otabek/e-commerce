@@ -1,4 +1,5 @@
 """Configure Alembic module."""
+
 # flake8: noqa F401
 import asyncio
 from logging.config import fileConfig

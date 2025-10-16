@@ -151,13 +151,9 @@ class TestCLI:
             ]
         )
 
-    def test_list_user_no_users(
-        self, runner: CliRunner, mocker, monkeypatch
-    ) -> None:
+    def test_list_user_no_users(self, runner: CliRunner, mocker, monkeypatch) -> None:
         """Test that the 'list' command works when there are no users."""
-        mock_get_all_users = mocker.patch(
-            self.patch_get_all_users, return_value=[]
-        )
+        mock_get_all_users = mocker.patch(self.patch_get_all_users, return_value=[])
 
         result = runner.invoke(app, ["user", "list"])
         assert result.exit_code == 0
@@ -245,9 +241,7 @@ class TestCLI:
     # ------------------------------------------------------------------------ #
     #                          test 'show' subcommand                          #
     # ------------------------------------------------------------------------ #
-    def test_show_user(
-        self, runner: CliRunner, mocker, monkeypatch, test_user
-    ) -> None:
+    def test_show_user(self, runner: CliRunner, mocker, monkeypatch, test_user) -> None:
         """Test that the 'show' command works."""
         monkeypatch.setenv("COLUMNS", "120")
         mock_get_user = mocker.patch(
@@ -271,9 +265,7 @@ class TestCLI:
             ]
         )
 
-    def test_show_missing_user(
-        self, runner: CliRunner, mocker, test_user
-    ) -> None:
+    def test_show_missing_user(self, runner: CliRunner, mocker, test_user) -> None:
         """Test that the 'show' command exits when the user is missing."""
         mock_get_user = mocker.patch(
             self.patch_get_user_by_id,
@@ -299,9 +291,7 @@ class TestCLI:
         mock_session = mocker.patch(
             self.patch_async_session,
         )
-        mock_session.return_value.__aenter__.return_value.get.return_value = (
-            test_user
-        )
+        mock_session.return_value.__aenter__.return_value.get.return_value = test_user
 
         result = runner.invoke(app, ["user", "verify", str(test_user.id)])
         assert result.exit_code == 0
@@ -332,33 +322,25 @@ class TestCLI:
         assert result.exit_code == 1
 
         assert mock_session.called
-        assert (
-            not mock_session.return_value.__aenter__.return_value.commit.called
-        )
+        assert not mock_session.return_value.__aenter__.return_value.commit.called
 
         assert result.exit_code == 1
 
         assert "ERROR verifying User" in result.output
         assert "Ooooops!!" in result.output
 
-    def test_verify_missing_user(
-        self, runner: CliRunner, mocker, test_user
-    ) -> None:
+    def test_verify_missing_user(self, runner: CliRunner, mocker, test_user) -> None:
         """Test that the 'verify' command exits when the user is missing."""
         mock_session = mocker.patch(
             self.patch_async_session,
         )
-        mock_session.return_value.__aenter__.return_value.get.return_value = (
-            None
-        )
+        mock_session.return_value.__aenter__.return_value.get.return_value = None
 
         result = runner.invoke(app, ["user", "verify", str(test_user.id)])
         assert result.exit_code == 1
 
         assert mock_session.called
-        assert (
-            not mock_session.return_value.__aenter__.return_value.commit.called
-        )
+        assert not mock_session.return_value.__aenter__.return_value.commit.called
 
         assert "ERROR verifying User" in result.output
         assert "User not found" in result.output
@@ -366,9 +348,7 @@ class TestCLI:
     # ------------------------------------------------------------------------ #
     #                           test 'ban' subcommand                          #
     # ------------------------------------------------------------------------ #
-    def test_ban_user(
-        self, runner: CliRunner, mocker, monkeypatch, test_user
-    ) -> None:
+    def test_ban_user(self, runner: CliRunner, mocker, monkeypatch, test_user) -> None:
         """Test that the 'ban' command works."""
         mock_session = mocker.patch(
             self.patch_async_session,
@@ -376,9 +356,7 @@ class TestCLI:
         mock_table = mocker.patch(
             "app.commands.user.show_table",
         )
-        mock_session.return_value.__aenter__.return_value.get.return_value = (
-            test_user
-        )
+        mock_session.return_value.__aenter__.return_value.get.return_value = test_user
 
         result = runner.invoke(app, ["user", "ban", str(test_user.id)])
         assert result.exit_code == 0
@@ -388,16 +366,12 @@ class TestCLI:
         assert mock_table.called
 
         # Check that the 'banned' value in the returned user is True
-        banned_user = (
-            mock_session.return_value.__aenter__.return_value.get.return_value
-        )
+        banned_user = mock_session.return_value.__aenter__.return_value.get.return_value
         assert banned_user.banned is True
 
         assert f"User {test_user.id} BANNED" in result.output
 
-    def test_ban_sqlalchemy_error(
-        self, runner: CliRunner, mocker, test_user
-    ) -> None:
+    def test_ban_sqlalchemy_error(self, runner: CliRunner, mocker, test_user) -> None:
         """Test that the 'ban' command exits when there is an error."""
         mock_session = mocker.patch(
             self.patch_async_session,
@@ -409,33 +383,25 @@ class TestCLI:
         assert result.exit_code == 1
 
         assert mock_session.called
-        assert (
-            not mock_session.return_value.__aenter__.return_value.commit.called
-        )
+        assert not mock_session.return_value.__aenter__.return_value.commit.called
 
         assert result.exit_code == 1
 
         assert "ERROR banning or unbanning User" in result.output
         assert "Ooooops!!" in result.output
 
-    def test_ban_missing_user(
-        self, runner: CliRunner, mocker, test_user
-    ) -> None:
+    def test_ban_missing_user(self, runner: CliRunner, mocker, test_user) -> None:
         """Test that the 'ban' command exits when the user is missing."""
         mock_session = mocker.patch(
             self.patch_async_session,
         )
-        mock_session.return_value.__aenter__.return_value.get.return_value = (
-            None
-        )
+        mock_session.return_value.__aenter__.return_value.get.return_value = None
 
         result = runner.invoke(app, ["user", "ban", str(test_user.id)])
         assert result.exit_code == 1
 
         assert mock_session.called
-        assert (
-            not mock_session.return_value.__aenter__.return_value.commit.called
-        )
+        assert not mock_session.return_value.__aenter__.return_value.commit.called
 
         assert "ERROR banning or unbanning User" in result.output
         assert "User not found" in result.output
@@ -453,9 +419,7 @@ class TestCLI:
         mock_table = mocker.patch(
             "app.commands.user.show_table",
         )
-        mock_session.return_value.__aenter__.return_value.get.return_value = (
-            test_user
-        )
+        mock_session.return_value.__aenter__.return_value.get.return_value = test_user
 
         result = runner.invoke(app, ["user", "admin", str(test_user.id)])
         assert result.exit_code == 0
@@ -465,9 +429,7 @@ class TestCLI:
         assert mock_table.called
 
         # Check that the 'role' value in the returned user is RoleType.admin
-        admin_user = (
-            mock_session.return_value.__aenter__.return_value.get.return_value
-        )
+        admin_user = mock_session.return_value.__aenter__.return_value.get.return_value
         assert admin_user.role == RoleType.admin
 
         assert f"Admin status granted to User {test_user.id}" in result.output
@@ -482,13 +444,9 @@ class TestCLI:
         mock_table = mocker.patch(
             "app.commands.user.show_table",
         )
-        mock_session.return_value.__aenter__.return_value.get.return_value = (
-            test_admin
-        )
+        mock_session.return_value.__aenter__.return_value.get.return_value = test_admin
 
-        result = runner.invoke(
-            app, ["user", "admin", str(test_admin.id), "--remove"]
-        )
+        result = runner.invoke(app, ["user", "admin", str(test_admin.id), "--remove"])
         assert result.exit_code == 0
 
         assert mock_session.called
@@ -496,18 +454,12 @@ class TestCLI:
         assert mock_table.called
 
         # Check that the 'role' value in the returned user is RoleType.user
-        user = (
-            mock_session.return_value.__aenter__.return_value.get.return_value
-        )
+        user = mock_session.return_value.__aenter__.return_value.get.return_value
         assert user.role == RoleType.user
 
-        assert (
-            f"Admin status removed from User {test_admin.id}" in result.output
-        )
+        assert f"Admin status removed from User {test_admin.id}" in result.output
 
-    def test_admin_sqlalchemy_error(
-        self, runner: CliRunner, mocker, test_user
-    ) -> None:
+    def test_admin_sqlalchemy_error(self, runner: CliRunner, mocker, test_user) -> None:
         """Test that the 'admin' command exits when there is an error."""
         mock_session = mocker.patch(
             self.patch_async_session,
@@ -519,33 +471,25 @@ class TestCLI:
         assert result.exit_code == 1
 
         assert mock_session.called
-        assert (
-            not mock_session.return_value.__aenter__.return_value.commit.called
-        )
+        assert not mock_session.return_value.__aenter__.return_value.commit.called
 
         assert result.exit_code == 1
 
         assert "ERROR changing admin status" in result.output
         assert "Ooooops!!" in result.output
 
-    def test_admin_missing_user(
-        self, runner: CliRunner, mocker, test_user
-    ) -> None:
+    def test_admin_missing_user(self, runner: CliRunner, mocker, test_user) -> None:
         """Test that the 'admin' command exits when the user is missing."""
         mock_session = mocker.patch(
             self.patch_async_session,
         )
-        mock_session.return_value.__aenter__.return_value.get.return_value = (
-            None
-        )
+        mock_session.return_value.__aenter__.return_value.get.return_value = None
 
         result = runner.invoke(app, ["user", "admin", str(test_user.id)])
         assert result.exit_code == 1
 
         assert mock_session.called
-        assert (
-            not mock_session.return_value.__aenter__.return_value.commit.called
-        )
+        assert not mock_session.return_value.__aenter__.return_value.commit.called
 
         assert "ERROR changing admin status" in result.output
         assert "User not found" in result.output
@@ -559,9 +503,7 @@ class TestCLI:
             self.patch_async_session,
         )
 
-        mock_session.return_value.__aenter__.return_value.get.return_value = (
-            test_user
-        )
+        mock_session.return_value.__aenter__.return_value.get.return_value = test_user
 
         result = runner.invoke(app, ["user", "delete", str(test_user.id)])
         assert result.exit_code == 0
@@ -585,33 +527,25 @@ class TestCLI:
         assert result.exit_code == 1
 
         assert mock_session.called
-        assert (
-            not mock_session.return_value.__aenter__.return_value.commit.called
-        )
+        assert not mock_session.return_value.__aenter__.return_value.commit.called
 
         assert result.exit_code == 1
 
         assert "ERROR deleting that User" in result.output
         assert "Ooooops!!" in result.output
 
-    def test_delete_missing_user(
-        self, runner: CliRunner, mocker, test_user
-    ) -> None:
+    def test_delete_missing_user(self, runner: CliRunner, mocker, test_user) -> None:
         """Test that the 'delete' command exits when the user is missing."""
         mock_session = mocker.patch(
             self.patch_async_session,
         )
-        mock_session.return_value.__aenter__.return_value.get.return_value = (
-            None
-        )
+        mock_session.return_value.__aenter__.return_value.get.return_value = None
 
         result = runner.invoke(app, ["user", "delete", str(test_user.id)])
         assert result.exit_code == 1
 
         assert mock_session.called
-        assert (
-            not mock_session.return_value.__aenter__.return_value.commit.called
-        )
+        assert not mock_session.return_value.__aenter__.return_value.commit.called
 
         assert "ERROR deleting that User" in result.output
         assert "User not found" in result.output
@@ -682,9 +616,7 @@ class TestCLI:
         mock_result.scalars.return_value.all.return_value = [test_user]
         mock_execute = mock_session.return_value.__aenter__.return_value.execute
         mock_execute.return_value = mock_result
-        result = runner.invoke(
-            app, ["user", "search", "john", "--field", "first_name"]
-        )
+        result = runner.invoke(app, ["user", "search", "john", "--field", "first_name"])
         assert result.exit_code == 0
 
         assert mock_session.called
@@ -718,9 +650,7 @@ class TestCLI:
         mock_result.scalars.return_value.all.return_value = [test_user]
         mock_execute = mock_session.return_value.__aenter__.return_value.execute
         mock_execute.return_value = mock_result
-        result = runner.invoke(
-            app, ["user", "search", "john@example.com", "--exact"]
-        )
+        result = runner.invoke(app, ["user", "search", "john@example.com", "--exact"])
         assert result.exit_code == 0
 
         assert mock_session.called
@@ -788,9 +718,7 @@ class TestCLI:
         assert mock_search.called
 
         # Verify search parameters - should default to ALL when field is invalid
-        mock_search.assert_called_once_with(
-            "test", SearchField.ALL, exact_match=False
-        )
+        mock_search.assert_called_once_with("test", SearchField.ALL, exact_match=False)
 
         # Check output shows all fields was used
         assert "all fields" in result.output

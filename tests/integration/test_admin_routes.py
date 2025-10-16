@@ -40,9 +40,7 @@ class TestAdminAuth:
         assert response.status_code == status.HTTP_200_OK
         assert "admin/login" in str(response.url)
 
-    async def test_admin_routes_redirect_to_login(
-        self, client: AsyncClient
-    ) -> None:
+    async def test_admin_routes_redirect_to_login(self, client: AsyncClient) -> None:
         """Test that the admin routes redirect to the login if no auth."""
         routes = ["/admin/user/list", "/admin/api-key/list", "/admin/logout"]
 
@@ -127,9 +125,7 @@ class TestAdminAuth:
             new_session.add(admin_user)
             await new_session.flush()
 
-            mocker.patch(
-                "app.admin.auth.async_session", return_value=new_session
-            )
+            mocker.patch("app.admin.auth.async_session", return_value=new_session)
             client.cookies = cookies
             response = await client.get(route, follow_redirects=True)
 
@@ -163,18 +159,12 @@ class TestAdminAuth:
             new_session.add(admin_user)
             await new_session.flush()
 
-            mocker.patch(
-                "app.admin.auth.async_session", return_value=new_session
-            )
+            mocker.patch("app.admin.auth.async_session", return_value=new_session)
 
-            mocker.patch(
-                "app.admin.auth.AdminAuth._decode_token", return_value=False
-            )
+            mocker.patch("app.admin.auth.AdminAuth._decode_token", return_value=False)
 
             client.cookies = cookies
-            response = await client.get(
-                "/admin/user/list", follow_redirects=True
-            )
+            response = await client.get("/admin/user/list", follow_redirects=True)
 
         assert response.status_code == status.HTTP_200_OK
         assert "admin/login" in str(response.url)
@@ -210,14 +200,10 @@ class TestAdminAuth:
             new_session.add(user)
             await new_session.flush()
 
-            mocker.patch(
-                "app.admin.auth.async_session", return_value=new_session
-            )
+            mocker.patch("app.admin.auth.async_session", return_value=new_session)
 
             client.cookies = cookies
-            response = await client.get(
-                "/admin/user/list", follow_redirects=True
-            )
+            response = await client.get("/admin/user/list", follow_redirects=True)
 
         assert response.status_code == status.HTTP_200_OK
         assert "admin/login" in str(response.url)
@@ -254,14 +240,10 @@ class TestAdminAuth:
             new_session.add(user)
             await new_session.flush()
 
-            mocker.patch(
-                "app.admin.auth.async_session", return_value=new_session
-            )
+            mocker.patch("app.admin.auth.async_session", return_value=new_session)
 
             client.cookies = cookies
-            response = await client.get(
-                "/admin/user/list", follow_redirects=True
-            )
+            response = await client.get("/admin/user/list", follow_redirects=True)
 
         assert response.status_code == status.HTTP_200_OK
         assert "admin/login" in str(response.url)

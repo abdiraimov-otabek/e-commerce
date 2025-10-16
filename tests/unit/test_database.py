@@ -119,9 +119,7 @@ class TestDatabase:
         mock_session.__aexit__.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_get_database_manual_multiple_operations(
-        self, mocker
-    ) -> None:
+    async def test_get_database_manual_multiple_operations(self, mocker) -> None:
         """Test that multiple database ops can be performed in same session."""
         mock_session = mocker.AsyncMock()
         mock_session.execute = mocker.AsyncMock()
@@ -182,9 +180,7 @@ class TestDatabase:
         mock_session.rollback.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_get_database_manual_no_commit_data_lost(
-        self, mocker
-    ) -> None:
+    async def test_get_database_manual_no_commit_data_lost(self, mocker) -> None:
         """Test that without manual commit, data changes are lost."""
         # Mock a session that tracks if commit was called
         mock_session = mocker.AsyncMock()
@@ -230,8 +226,7 @@ class TestDatabase:
         # Test normal database URL
         url = db.get_database_url()
         assert url == (
-            "postgresql+asyncpg://test_user:test_password"
-            "@test_host:5432/test_db"
+            "postgresql+asyncpg://test_user:test_password" "@test_host:5432/test_db"
         )
 
         # Test test database URL
@@ -254,8 +249,7 @@ class TestDatabase:
         """Test create_session_maker function returns a valid session maker."""
         mock_get_url = mocker.patch("app.database.db.get_database_url")
         mock_get_url.return_value = (
-            "postgresql+asyncpg://test_user:test_password"
-            "@test_host:5432/test_db"
+            "postgresql+asyncpg://test_user:test_password" "@test_host:5432/test_db"
         )
 
         # Test normal session maker

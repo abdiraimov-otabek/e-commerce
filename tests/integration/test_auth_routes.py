@@ -121,9 +121,7 @@ class TestAuthRoutes:
         assert duplicate_user.status_code == status.HTTP_400_BAD_REQUEST
 
     @pytest.mark.asyncio
-    async def test_password_is_stored_hashed(
-        self, client, test_db, mocker
-    ) -> None:
+    async def test_password_is_stored_hashed(self, client, test_db, mocker) -> None:
         """Ensure that the raw password is not stored in the database."""
         # disable email sending by mocking the function
         _ = mocker.patch(self.email_fn_to_patch)
@@ -224,9 +222,7 @@ class TestAuthRoutes:
     #                            test '/login' route                           #
     # ------------------------------------------------------------------------ #
     @pytest.mark.asyncio
-    async def test_cant_login_before_verifying_email(
-        self, client, test_db
-    ) -> None:
+    async def test_cant_login_before_verifying_email(self, client, test_db) -> None:
         """Ensure a new user has to validate email before logging in."""
         test_db.add(User(**self.test_unverified_user))
         await test_db.commit()
@@ -327,9 +323,7 @@ class TestAuthRoutes:
         assert "Field required" in response.json()["detail"][0]["msg"]
 
     @pytest.mark.asyncio
-    async def test_cant_login_with_unverified_email(
-        self, client, test_db
-    ) -> None:
+    async def test_cant_login_with_unverified_email(self, client, test_db) -> None:
         """Ensure the user cant login with unverified email."""
         test_db.add(User(**self.test_unverified_user))
         await test_db.commit()
@@ -423,9 +417,7 @@ class TestAuthRoutes:
 
         verification_token = AuthManager.encode_verify_token(User(id=1))
 
-        response = await client.get(
-            "/verify/", params={"code": verification_token}
-        )
+        response = await client.get("/verify/", params={"code": verification_token})
 
         assert response.status_code == status.HTTP_200_OK
         assert response.json()["detail"] == "User succesfully Verified"
@@ -435,9 +427,7 @@ class TestAuthRoutes:
         ["BADBEEF", ""],
     )
     @pytest.mark.asyncio
-    async def test_verify_bad_token(
-        self, client, test_db, verification_token
-    ) -> None:
+    async def test_verify_bad_token(self, client, test_db, verification_token) -> None:
         """Ensure a bad token cant be used to verify a user."""
         test_db.add(User(**self.test_unverified_user))
         await test_db.commit()

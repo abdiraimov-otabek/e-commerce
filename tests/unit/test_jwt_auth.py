@@ -64,9 +64,7 @@ class TestJWTAuth:
         mock_req = mocker.patch(self.mock_request_path)
         mock_req.headers = {}
 
-        result = await get_jwt_user(
-            request=mock_req, db=test_db, credentials=None
-        )
+        result = await get_jwt_user(request=mock_req, db=test_db, credentials=None)
         assert result is None
 
     async def test_jwt_auth_banned_user(self, test_db, mocker) -> None:

@@ -37,9 +37,7 @@ class TestUserAdmin:
         )
 
         # Call on_model_change with is_created=True to simulate user creation
-        await admin.on_model_change(
-            data, model, True, Request(scope={"type": "http"})
-        )
+        await admin.on_model_change(data, model, True, Request(scope={"type": "http"}))
 
         # Password should be hashed
         assert data["password"] != original_password
@@ -63,9 +61,7 @@ class TestUserAdmin:
         )
 
         # Call on_model_change with is_created=False to simulate user update
-        await admin.on_model_change(
-            data, model, False, Request(scope={"type": "http"})
-        )
+        await admin.on_model_change(data, model, False, Request(scope={"type": "http"}))
 
         # Data should be unchanged
         assert data == original_data
@@ -190,9 +186,7 @@ class TestAdminAuth:
         assert auth_backend._validate_user("password123", regular_user) is False
 
         # Test wrong password
-        assert (
-            auth_backend._validate_user("wrong_password", admin_user) is False
-        )
+        assert auth_backend._validate_user("wrong_password", admin_user) is False
 
         # Test None user
         assert auth_backend._validate_user("any_password", None) is False

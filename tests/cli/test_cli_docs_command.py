@@ -39,9 +39,7 @@ class TestCLI:
         self, mocker: MockerFixture, runner: CliRunner
     ) -> None:
         """Make sure the 'json.dump' function is called."""
-        mocker.patch(
-            "app.commands.docs.get_openapi", return_value={"test": "data"}
-        )
+        mocker.patch("app.commands.docs.get_openapi", return_value={"test": "data"})
         mock_json_dump = mocker.patch("app.commands.docs.json.dump")
         result = runner.invoke(app, ["docs", "openapi"])
 

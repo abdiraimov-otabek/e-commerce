@@ -91,9 +91,7 @@ class TestSeedCommand:
         seed_mock = mocker.patch(self.seed_users_path, autospec=True)
 
         # Run the command with --force
-        result = CliRunner().invoke(
-            app, ["db", "seed", str(dummy_file), "--force"]
-        )
+        result = CliRunner().invoke(app, ["db", "seed", str(dummy_file), "--force"])
 
         # Verify output and success
         assert result.exit_code == 0
@@ -182,9 +180,7 @@ class TestValidateCsvFile:
         csv_file = tmp_path / "valid.csv"
         with csv_file.open("w", encoding="utf-8") as f:
             writer = csv.writer(f)
-            writer.writerow(
-                ["email", "password", "first_name", "last_name", "role"]
-            )
+            writer.writerow(["email", "password", "first_name", "last_name", "role"])
             writer.writerow(
                 ["test@example.com", "Password123!", "Test", "User", "user"]
             )
@@ -231,9 +227,7 @@ class TestValidateCsvFile:
         csv_file = tmp_path / "missing_fields.csv"
         with csv_file.open("w", encoding="utf-8") as f:
             writer = csv.writer(f)
-            writer.writerow(
-                ["email", "password"]
-            )  # Missing first_name and last_name
+            writer.writerow(["email", "password"])  # Missing first_name and last_name
             writer.writerow(["test@example.com", "Password123!"])
 
         # Validate the CSV file and expect an error
@@ -264,9 +258,7 @@ class TestSeedUsersFromCsv:
                 "role": "admin",
             },
         ]
-        mocker.patch(
-            "app.commands.db._validate_csv_file", return_value=mock_rows
-        )
+        mocker.patch("app.commands.db._validate_csv_file", return_value=mock_rows)
 
         # Mock the session context manager
         session_mock = mocker.AsyncMock()
@@ -318,9 +310,7 @@ class TestSeedUsersFromCsv:
                 "role": "user",
             }
         ]
-        mocker.patch(
-            "app.commands.db._validate_csv_file", return_value=mock_rows
-        )
+        mocker.patch("app.commands.db._validate_csv_file", return_value=mock_rows)
 
         # Mock the session context manager
         session_mock = mocker.AsyncMock()
@@ -357,9 +347,7 @@ class TestSeedUsersFromCsv:
                 "role": "user",
             }
         ]
-        mocker.patch(
-            "app.commands.db._validate_csv_file", return_value=mock_rows
-        )
+        mocker.patch("app.commands.db._validate_csv_file", return_value=mock_rows)
 
         # Mock the session context manager
         session_mock = mocker.AsyncMock()
@@ -369,9 +357,7 @@ class TestSeedUsersFromCsv:
         # Mock UserManager.register to raise HTTPException
         user_manager_mock = mocker.patch(
             "app.commands.db.UserManager.register",
-            side_effect=HTTPException(
-                status_code=400, detail="Some other error"
-            ),
+            side_effect=HTTPException(status_code=400, detail="Some other error"),
         )
 
         # Run the function
@@ -396,9 +382,7 @@ class TestSeedUsersFromCsv:
                 "role": "user",
             }
         ]
-        mocker.patch(
-            "app.commands.db._validate_csv_file", return_value=mock_rows
-        )
+        mocker.patch("app.commands.db._validate_csv_file", return_value=mock_rows)
 
         # Mock the session context manager
         session_mock = mocker.AsyncMock()
@@ -433,9 +417,7 @@ class TestSeedUsersFromCsv:
                 "role": "user",
             }
         ]
-        mocker.patch(
-            "app.commands.db._validate_csv_file", return_value=mock_rows
-        )
+        mocker.patch("app.commands.db._validate_csv_file", return_value=mock_rows)
 
         # Mock the session context manager
         session_mock = mocker.AsyncMock()
@@ -470,15 +452,11 @@ class TestSeedUsersFromCsv:
                 "role": "user",
             }
         ]
-        mocker.patch(
-            "app.commands.db._validate_csv_file", return_value=mock_rows
-        )
+        mocker.patch("app.commands.db._validate_csv_file", return_value=mock_rows)
 
         # Mock the session context manager to raise SQLAlchemyError
         session_mock = mocker.AsyncMock()
-        session_mock.__aenter__.side_effect = SQLAlchemyError(
-            "Global database error"
-        )
+        session_mock.__aenter__.side_effect = SQLAlchemyError("Global database error")
         mocker.patch("app.commands.db.async_session", return_value=session_mock)
 
         # Run the function and expect an error

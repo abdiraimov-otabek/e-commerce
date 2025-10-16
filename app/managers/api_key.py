@@ -91,16 +91,12 @@ class ApiKeyManager:
         return api_key, raw_key
 
     @classmethod
-    async def get_key(
-        cls, key_id: UUID, session: AsyncSession
-    ) -> Optional[ApiKey]:
+    async def get_key(cls, key_id: UUID, session: AsyncSession) -> Optional[ApiKey]:
         """Get an API key by ID."""
         return await get_api_key_by_id_(key_id, session)
 
     @classmethod
-    async def get_user_keys(
-        cls, user_id: int, session: AsyncSession
-    ) -> list[ApiKey]:
+    async def get_user_keys(cls, user_id: int, session: AsyncSession) -> list[ApiKey]:
         """Get all API keys for a user."""
         return list(await get_user_api_keys_(user_id, session))
 

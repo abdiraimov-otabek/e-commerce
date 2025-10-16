@@ -141,7 +141,7 @@ allowed_elements = "!--,![CDATA[,!DOCTYPE,swagger-ui"
 enabled = false
 
 [tool.ruff]
-line-length = 80
+line-length = 120
 target-version = "py39"
 src = ["app"]
 extend-exclude = ["app/migrations"]

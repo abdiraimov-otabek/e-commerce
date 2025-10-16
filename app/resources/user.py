@@ -101,9 +101,7 @@ async def ban_user(
 
     Admins only. The Admin cannot ban their own ID!
     """
-    await UserManager.set_ban_status(
-        user_id, request.state.user.id, db, banned=True
-    )
+    await UserManager.set_ban_status(user_id, request.state.user.id, db, banned=True)
 
 
 @router.post(
@@ -120,9 +118,7 @@ async def unban_user(
 
     Admins only.
     """
-    await UserManager.set_ban_status(
-        user_id, request.state.user.id, db, banned=False
-    )
+    await UserManager.set_ban_status(user_id, request.state.user.id, db, banned=False)
 
 
 @router.put(

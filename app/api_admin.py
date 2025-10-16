@@ -62,17 +62,13 @@ app.add_typer(
     name="user",
     help="Add or modify users.",
 )
-app.add_typer(
-    custom.app, name="custom", help="Customize the Application Metadata."
-)
+app.add_typer(custom.app, name="custom", help="Customize the Application Metadata.")
 app.add_typer(
     db.app,
     name="db",
     help="Control the Database.",
 )
-app.add_typer(
-    docs.app, name="docs", help="Generate and upload API documentation."
-)
+app.add_typer(docs.app, name="docs", help="Generate and upload API documentation.")
 app.add_typer(test.app, name="test", help="Setup and Run tests.")
 app.add_typer(
     keys.app,

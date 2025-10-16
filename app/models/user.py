@@ -27,9 +27,7 @@ class User(Base):
     verified: Mapped[bool] = mapped_column(Boolean, default=False)
 
     # Relationships
-    api_keys = relationship(
-        "ApiKey", back_populates="user", cascade="all, delete"
-    )
+    api_keys = relationship("ApiKey", back_populates="user", cascade="all, delete")
 
     def __repr__(self) -> str:
         """Define the model representation."""

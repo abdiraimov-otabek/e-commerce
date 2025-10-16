@@ -30,9 +30,7 @@ class TestApiKeyManager:
         """Test API key creation when database operation fails."""
         # Create a user first
         _ = await UserManager.register(self.test_user, test_db)
-        user = await UserManager.get_user_by_email(
-            self.test_user["email"], test_db
-        )
+        user = await UserManager.get_user_by_email(self.test_user["email"], test_db)
 
         # Mock add_new_api_key_ to return None (simulating failure)
         mocker.patch("app.managers.api_key.add_new_api_key_", return_value=None)
@@ -53,9 +51,7 @@ class TestApiKeyManager:
         """Test getting all API keys for a user."""
         # Create a user and multiple API keys
         _ = await UserManager.register(self.test_user, test_db)
-        user = await UserManager.get_user_by_email(
-            self.test_user["email"], test_db
-        )
+        user = await UserManager.get_user_by_email(self.test_user["email"], test_db)
 
         # Create 3 API keys
         await ApiKeyManager.create_key(user, "Key 1", None, test_db)
@@ -72,12 +68,8 @@ class TestApiKeyManager:
         """Test deleting an API key."""
         # Create a user and API key
         _ = await UserManager.register(self.test_user, test_db)
-        user = await UserManager.get_user_by_email(
-            self.test_user["email"], test_db
-        )
-        api_key, _ = await ApiKeyManager.create_key(
-            user, "Test Key", None, test_db
-        )
+        user = await UserManager.get_user_by_email(self.test_user["email"], test_db)
+        api_key, _ = await ApiKeyManager.create_key(user, "Test Key", None, test_db)
 
         # Delete the key
         await ApiKeyManager.delete_key(api_key.id, test_db)
@@ -110,9 +102,7 @@ class TestApiKeyManager:
         result = await auth(request=mock_req, db=test_db)
         assert result is None
 
-    async def test_api_key_auth_invalid_key_format(
-        self, test_db, mocker
-    ) -> None:
+    async def test_api_key_auth_invalid_key_format(self, test_db, mocker) -> None:
         """Test API key auth with invalid key format."""
         mock_req = mocker.patch("app.managers.auth.Request")
         mock_req.headers = {"X-API-Key": "invalid_prefix_key"}
@@ -130,9 +120,7 @@ class TestApiKeyManager:
         """Test inactive API key with auto_error disabled."""
         # Create a user and API key
         _ = await UserManager.register(self.test_user, test_db)
-        user = await UserManager.get_user_by_email(
-            self.test_user["email"], test_db
-        )
+        user = await UserManager.get_user_by_email(self.test_user["email"], test_db)
         api_key, raw_key = await ApiKeyManager.create_key(
             user, "Test Key", None, test_db
         )
@@ -153,9 +141,7 @@ class TestApiKeyManager:
         """Test inactive API key with auto_error enabled."""
         # Create a user and API key
         _ = await UserManager.register(self.test_user, test_db)
-        user = await UserManager.get_user_by_email(
-            self.test_user["email"], test_db
-        )
+        user = await UserManager.get_user_by_email(self.test_user["email"], test_db)
         api_key, raw_key = await ApiKeyManager.create_key(
             user, "Test Key", None, test_db
         )
@@ -179,9 +165,7 @@ class TestApiKeyManager:
         """Test API key auth when user is not found."""
         # Create a user and API key
         _ = await UserManager.register(self.test_user, test_db)
-        user = await UserManager.get_user_by_email(
-            self.test_user["email"], test_db
-        )
+        user = await UserManager.get_user_by_email(self.test_user["email"], test_db)
         api_key, raw_key = await ApiKeyManager.create_key(
             user, "Test Key", None, test_db
         )
@@ -209,9 +193,7 @@ class TestApiKeyManager:
         """Test API key auth when user is not found & auto_error disabled."""
         # Create a user and API key
         _ = await UserManager.register(self.test_user, test_db)
-        user = await UserManager.get_user_by_email(
-            self.test_user["email"], test_db
-        )
+        user = await UserManager.get_user_by_email(self.test_user["email"], test_db)
         api_key, raw_key = await ApiKeyManager.create_key(
             user, "Test Key", None, test_db
         )
@@ -236,9 +218,7 @@ class TestApiKeyManager:
         """Test that successful API key auth sets request state."""
         # Create a user and API key
         _ = await UserManager.register(self.test_user, test_db)
-        user = await UserManager.get_user_by_email(
-            self.test_user["email"], test_db
-        )
+        user = await UserManager.get_user_by_email(self.test_user["email"], test_db)
         api_key, raw_key = await ApiKeyManager.create_key(
             user, "Test Key", None, test_db
         )
@@ -259,29 +239,19 @@ class TestApiKeyManager:
         """Test the string representation of an API key."""
         # Create a user and API key
         _ = await UserManager.register(self.test_user, test_db)
-        user = await UserManager.get_user_by_email(
-            self.test_user["email"], test_db
-        )
-        api_key, _ = await ApiKeyManager.create_key(
-            user, "Test Key", None, test_db
-        )
+        user = await UserManager.get_user_by_email(self.test_user["email"], test_db)
+        api_key, _ = await ApiKeyManager.create_key(user, "Test Key", None, test_db)
 
         # Test the __repr__ function
         expected_repr = f'ApiKey({api_key.id}, "Test Key")'
         assert repr(api_key) == expected_repr
 
-    async def test_api_key_auth_user_not_found_in_db(
-        self, test_db, mocker
-    ) -> None:
+    async def test_api_key_auth_user_not_found_in_db(self, test_db, mocker) -> None:
         """Test API key auth when user exists in key but not in database."""
         # Create a user and API key
         _ = await UserManager.register(self.test_user, test_db)
-        user = await UserManager.get_user_by_email(
-            self.test_user["email"], test_db
-        )
-        _, raw_key = await ApiKeyManager.create_key(
-            user, "Test Key", None, test_db
-        )
+        user = await UserManager.get_user_by_email(self.test_user["email"], test_db)
+        _, raw_key = await ApiKeyManager.create_key(user, "Test Key", None, test_db)
 
         # Mock get_user_by_id_ to return None (simulating user not in db)
         mocker.patch("app.managers.api_key.get_user_by_id_", return_value=None)
@@ -303,12 +273,8 @@ class TestApiKeyManager:
         """Test API key auth when user not in database & auto_error is False."""
         # Create a user and API key
         _ = await UserManager.register(self.test_user, test_db)
-        user = await UserManager.get_user_by_email(
-            self.test_user["email"], test_db
-        )
-        _, raw_key = await ApiKeyManager.create_key(
-            user, "Test Key", None, test_db
-        )
+        user = await UserManager.get_user_by_email(self.test_user["email"], test_db)
+        _, raw_key = await ApiKeyManager.create_key(user, "Test Key", None, test_db)
 
         # Mock get_user_by_id_ to return None (simulating user not in db)
         mocker.patch("app.managers.api_key.get_user_by_id_", return_value=None)

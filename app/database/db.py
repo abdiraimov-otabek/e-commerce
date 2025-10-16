@@ -64,9 +64,7 @@ def create_session_maker(
     Args:
         use_test_db: Whether to use the test database name
     """
-    engine = create_async_engine(
-        get_database_url(use_test_db=use_test_db), echo=False
-    )
+    engine = create_async_engine(get_database_url(use_test_db=use_test_db), echo=False)
     return async_sessionmaker(engine, expire_on_commit=False)
 
 

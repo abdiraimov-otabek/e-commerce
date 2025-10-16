@@ -23,16 +23,12 @@ from app.resources.routes import api_router
 BLIND_USER_ERROR = 66
 
 if not get_settings().i_read_the_damn_docs:
-    logger.error(
-        "You didn't read the docs and change the settings in the .env file!"
-    )
+    logger.error("You didn't read the docs and change the settings in the .env file!")
     logger.error(
         "The API has changed massively since version 0.4.0 and you need to "
         "familiarize yourself with the new breaking changes."
     )
-    logger.error(
-        "See https://api-template.seapagan.net/important/ for information."
-    )
+    logger.error("See https://api-template.seapagan.net/important/ for information.")
     sys.exit(BLIND_USER_ERROR)
 
 
@@ -69,7 +65,7 @@ app = FastAPI(
     version=get_api_version(),
     lifespan=lifespan,
     swagger_ui_parameters={"defaultModelsExpandDepth": 0},
-    default_response_class=ORJSONResponse
+    default_response_class=ORJSONResponse,
 )
 
 # register the API routes

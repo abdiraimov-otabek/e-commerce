@@ -11,8 +11,6 @@ class TestUserModel:
 
     def test_repr(self) -> None:
         """Test the __repr__ method."""
-        user = User(
-            id=1, email="test@test.com", first_name="test", last_name="user"
-        )
+        user = User(id=1, email="test@test.com", first_name="test", last_name="user")
 
         assert repr(user) == 'User(1, "test user")'

@@ -16,9 +16,7 @@ from app.logs import logger
 try:
     from .metadata import custom_metadata
 except ModuleNotFoundError:  # pragma: no cover
-    logger.error(
-        "The metadata file could not be found, it may have been deleted."
-    )
+    logger.error("The metadata file could not be found, it may have been deleted.")
     logger.error("Please run 'api-admin custom init' to regenerate defaults.")
     sys.exit(1)
 

@@ -12,10 +12,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.config.settings import get_settings
 from app.database.db import get_database
 from app.database.helpers import get_user_by_id_
-from app.managers.email import EmailManager
+from app.managers.email_manager import EmailManager
 from app.models.enums import RoleType
 from app.models.user import User
-from app.schemas.email import EmailTemplateSchema
+from app.schemas.email_schema import EmailTemplateSchema
 from app.schemas.request.auth import TokenRefreshRequest
 
 
@@ -47,9 +47,7 @@ class AuthManager:
                     minutes=get_settings().access_token_expire_minutes
                 ),
             }
-            return jwt.encode(
-                payload, get_settings().secret_key, algorithm="HS256"
-            )
+            return jwt.encode(payload, get_settings().secret_key, algorithm="HS256")
         except (jwt.PyJWTError, AttributeError) as exc:
             # log the exception
             raise HTTPException(
@@ -66,9 +64,7 @@ class AuthManager:
                 + datetime.timedelta(minutes=60 * 24 * 30),
                 "typ": "refresh",
             }
-            return jwt.encode(
-                payload, get_settings().secret_key, algorithm="HS256"
-            )
+            return jwt.encode(payload, get_settings().secret_key, algorithm="HS256")
         except (jwt.PyJWTError, AttributeError) as exc:
             # log the exception
             raise HTTPException(
@@ -86,9 +82,7 @@ class AuthManager:
                 + datetime.timedelta(minutes=10),
                 "typ": "verify",
             }
-            return jwt.encode(
-                payload, get_settings().secret_key, algorithm="HS256"
-            )
+            return jwt.encode(payload, get_settings().secret_key, algorithm="HS256")
         except (jwt.PyJWTError, AttributeError) as exc:
             # log the exception
             raise HTTPException(
@@ -97,9 +91,7 @@ class AuthManager:
             ) from exc
 
     @staticmethod
-    async def refresh(
-        refresh_token: TokenRefreshRequest, session: AsyncSession
-    ) -> str:
+    async def refresh(refresh_token: TokenRefreshRequest, session: AsyncSession) -> str:
         """Refresh an expired JWT token, given a valid Refresh token."""
         try:
             payload = jwt.decode(
@@ -242,9 +234,7 @@ class AuthManager:
         #     ),
         # )
 
-        raise HTTPException(
-            status.HTTP_200_OK, ResponseMessages.VALIDATION_RESENT
-        )
+        raise HTTPException(status.HTTP_200_OK, ResponseMessages.VALIDATION_RESENT)
 
 
 bearer = HTTPBearer(auto_error=False)
@@ -270,11 +260,7 @@ async def get_jwt_user(
         user_data = await get_user_by_id_(payload["sub"], db)
 
         # Check user validity
-        if (
-            not user_data
-            or bool(user_data.banned)
-            or not bool(user_data.verified)
-        ):
+        if not user_data or bool(user_data.banned) or not bool(user_data.verified):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail=ResponseMessages.INVALID_TOKEN,
@@ -311,9 +297,8 @@ def can_edit_user(request: Request) -> None:
 
     True if they own the resource or are Admin
     """
-    if (
-        request.state.user.role != RoleType.admin
-        and request.state.user.id != int(request.path_params["user_id"])
+    if request.state.user.role != RoleType.admin and request.state.user.id != int(
+        request.path_params["user_id"]
     ):
         raise HTTPException(status.HTTP_403_FORBIDDEN, "Forbidden")
 

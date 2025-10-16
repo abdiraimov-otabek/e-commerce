@@ -5,6 +5,7 @@ Revises: 5a8bd25c2227
 Create Date: 2025-02-18 15:14:52.123456
 
 """
+
 from typing import Sequence, Union
 
 import sqlalchemy as sa
@@ -42,12 +43,8 @@ def upgrade() -> None:
         ),
         sa.PrimaryKeyConstraint("id"),
     )
-    op.create_index(
-        "ix_api_keys_key", "api_keys", ["key"], unique=True
-    )
-    op.create_index(
-        "ix_api_keys_user_id", "api_keys", ["user_id"], unique=False
-    )
+    op.create_index("ix_api_keys_key", "api_keys", ["key"], unique=True)
+    op.create_index("ix_api_keys_user_id", "api_keys", ["user_id"], unique=False)
 
 
 def downgrade() -> None:

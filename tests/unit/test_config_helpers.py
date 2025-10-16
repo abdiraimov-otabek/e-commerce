@@ -53,9 +53,7 @@ class TestConfigHelpers:
 
         with pytest.raises(SystemExit, match="2"):
             get_api_version()
-        log_messages = [
-            (record.levelname, record.message) for record in caplog.records
-        ]
+        log_messages = [(record.levelname, record.message) for record in caplog.records]
 
         assert len(log_messages) == 1
         assert any(
@@ -73,9 +71,7 @@ class TestConfigHelpers:
         with pytest.raises(SystemExit, match="2"):
             get_api_version()
 
-        log_messages = [
-            (record.levelname, record.message) for record in caplog.records
-        ]
+        log_messages = [(record.levelname, record.message) for record in caplog.records]
 
         assert len(log_messages) == 1
         assert (
@@ -95,9 +91,7 @@ class TestConfigHelpers:
         with pytest.raises(SystemExit, match="2"):
             get_api_version()
 
-        log_messages = [
-            (record.levelname, record.message) for record in caplog.records
-        ]
+        log_messages = [(record.levelname, record.message) for record in caplog.records]
 
         assert len(log_messages) == 1
         assert (
@@ -194,9 +188,7 @@ class TestConfigHelpers:
             {"name": "test_name", "description": "test_desc"},
         ],
     )
-    def test_get_api_details_missing_key(
-        self, mocker, caplog, missing_keys
-    ) -> None:
+    def test_get_api_details_missing_key(self, mocker, caplog, missing_keys) -> None:
         """We should return an Error if any details are missing."""
         mocker.patch(
             self.mock_load_rtoml,

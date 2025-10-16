@@ -11,9 +11,7 @@ from app.database.db import Base, get_database_url
 
 app = typer.Typer(no_args_is_help=True, rich_markup_mode="rich")
 
-async_engine = create_async_engine(
-    get_database_url(use_test_db=True), echo=False
-)
+async_engine = create_async_engine(get_database_url(use_test_db=True), echo=False)
 
 
 async def prepare_database() -> None:

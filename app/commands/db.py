@@ -36,9 +36,7 @@ def init(
         False,
         "--force",
         "-f",
-        prompt=(
-            "Warning! This deletes all data in the database. Are you sure?"
-        ),
+        prompt=("Warning! This deletes all data in the database. Are you sure?"),
         help="Do not ask for confirmation.",
     ),
 ) -> None:
@@ -64,9 +62,7 @@ def drop(
         False,
         "--force",
         "-f",
-        prompt=(
-            "Warning! This deletes all data in the database. Are you sure?"
-        ),
+        prompt=("Warning! This deletes all data in the database. Are you sure?"),
         help="Do not ask for confirmation.",
     ),
 ) -> None:
@@ -147,8 +143,7 @@ def populate(
     num_admins, num_regular_users = calc_admin_count(count)
 
     rprint(
-        f"\nCreating {num_regular_users} regular users "
-        f"and {num_admins} admins..."
+        f"\nCreating {num_regular_users} regular users " f"and {num_admins} admins..."
     )
 
     # Run the async function to populate the database
@@ -240,8 +235,7 @@ async def _create_single_user(
                     )
                 else:
                     rprint(
-                        "  [red]Failed to create user after "
-                        f"{max_retries} attempts"
+                        "  [red]Failed to create user after " f"{max_retries} attempts"
                     )
                     return False
             else:
@@ -269,18 +263,14 @@ async def _populate_db(num_regular_users: int, num_admins: int) -> None:
             # Create admin users
             admin_count = 0
             for _ in range(num_admins):
-                success = await _create_single_user(
-                    fake, session, is_admin=True
-                )
+                success = await _create_single_user(fake, session, is_admin=True)
                 if success:
                     admin_count += 1
 
             # Create regular users
             user_count = 0
             for _ in range(num_regular_users):
-                success = await _create_single_user(
-                    fake, session, is_admin=False
-                )
+                success = await _create_single_user(fake, session, is_admin=False)
                 if success:
                     user_count += 1
 
@@ -430,8 +420,7 @@ async def _seed_users_from_csv(csv_file: Path) -> None:
                         duplicate_count += 1
                     else:
                         rprint(
-                            f"  [yellow]Failed: {user_data['email']} - "
-                            f"{exc.detail}"
+                            f"  [yellow]Failed: {user_data['email']} - " f"{exc.detail}"
                         )
                         error_count += 1
                     # Rollback this transaction
@@ -440,8 +429,7 @@ async def _seed_users_from_csv(csv_file: Path) -> None:
                 except (ValueError, KeyError) as e:
                     # Handle validation errors
                     rprint(
-                        f"  [yellow]Failed: {row.get('email', 'unknown')} - "
-                        f"{e!r}"
+                        f"  [yellow]Failed: {row.get('email', 'unknown')} - " f"{e!r}"
                     )
                     error_count += 1
                     await session.rollback()

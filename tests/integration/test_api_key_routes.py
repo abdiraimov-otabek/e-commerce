@@ -402,9 +402,7 @@ class TestApiKeyRoutes:
         """Test that an admin can list another user's API key."""
         # Create a regular user and an admin
         regular_user = User(**self.get_test_user(email="regular@test.com"))
-        admin_user = User(
-            **self.get_test_user(admin=True, email="admin@test.com")
-        )
+        admin_user = User(**self.get_test_user(admin=True, email="admin@test.com"))
         test_db.add(regular_user)
         test_db.add(admin_user)
         await test_db.commit()
@@ -445,9 +443,7 @@ class TestApiKeyRoutes:
         """Test that an admin can update another user's API key."""
         # Create a regular user and an admin
         regular_user = User(**self.get_test_user(email="regular@test.com"))
-        admin_user = User(
-            **self.get_test_user(admin=True, email="admin@test.com")
-        )
+        admin_user = User(**self.get_test_user(admin=True, email="admin@test.com"))
         test_db.add(regular_user)
         test_db.add(admin_user)
         await test_db.commit()
@@ -483,9 +479,7 @@ class TestApiKeyRoutes:
         """Test that an admin can delete another user's API key."""
         # Create a regular user and an admin
         regular_user = User(**self.get_test_user(email="regular@test.com"))
-        admin_user = User(
-            **self.get_test_user(admin=True, email="admin@test.com")
-        )
+        admin_user = User(**self.get_test_user(admin=True, email="admin@test.com"))
         test_db.add(regular_user)
         test_db.add(admin_user)
         await test_db.commit()
@@ -571,9 +565,7 @@ class TestApiKeyRoutes:
         # Create two regular users and an admin
         user1 = User(**self.get_test_user(email="user1@test.com"))
         user2 = User(**self.get_test_user(email="user2@test.com"))
-        admin_user = User(
-            **self.get_test_user(admin=True, email="admin@test.com")
-        )
+        admin_user = User(**self.get_test_user(admin=True, email="admin@test.com"))
         test_db.add(user1)
         test_db.add(user2)
         test_db.add(admin_user)
@@ -608,9 +600,7 @@ class TestApiKeyRoutes:
         """Test admin trying to update a key without providing any fields."""
         # Create a regular user and an admin
         regular_user = User(**self.get_test_user(email="regular@test.com"))
-        admin_user = User(
-            **self.get_test_user(admin=True, email="admin@test.com")
-        )
+        admin_user = User(**self.get_test_user(admin=True, email="admin@test.com"))
         test_db.add(regular_user)
         test_db.add(admin_user)
         await test_db.commit()
@@ -648,9 +638,7 @@ class TestApiKeyRoutes:
         # Create two regular users and an admin
         user1 = User(**self.get_test_user(email="user1@test.com"))
         user2 = User(**self.get_test_user(email="user2@test.com"))
-        admin_user = User(
-            **self.get_test_user(admin=True, email="admin@test.com")
-        )
+        admin_user = User(**self.get_test_user(admin=True, email="admin@test.com"))
         test_db.add(user1)
         test_db.add(user2)
         test_db.add(admin_user)
@@ -684,9 +672,7 @@ class TestApiKeyRoutes:
         """Test admin updating an API key when the update operation fails."""
         # Create a regular user and an admin
         regular_user = User(**self.get_test_user(email="regular@test.com"))
-        admin_user = User(
-            **self.get_test_user(admin=True, email="admin@test.com")
-        )
+        admin_user = User(**self.get_test_user(admin=True, email="admin@test.com"))
         test_db.add(regular_user)
         test_db.add(admin_user)
         await test_db.commit()

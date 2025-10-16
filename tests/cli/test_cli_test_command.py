@@ -46,9 +46,7 @@ class TestCLI:
 
         mock_prepare_database.assert_called_once()
 
-    def test_prepare_database_calls_migrations(
-        self, runner: CliRunner, mocker
-    ) -> None:
+    def test_prepare_database_calls_migrations(self, runner: CliRunner, mocker) -> None:
         """Test that the test database is dropped then re-created."""
         cmd_list = [
             mocker.call(Base.metadata.drop_all),
@@ -63,9 +61,7 @@ class TestCLI:
 
         mock_connection.begin.return_value.__aenter__.assert_called()
 
-        run_sync = (
-            mock_connection.begin.return_value.__aenter__.return_value.run_sync
-        )
+        run_sync = mock_connection.begin.return_value.__aenter__.return_value.run_sync
 
         assert run_sync.call_count == 2  # noqa: PLR2004
         run_sync.assert_has_calls(cmd_list)

@@ -44,9 +44,7 @@ class AdminAuth(AuthenticationBackend):
         try:
             # TTL - defaults to 24 hours (in seconds) but can be overridden by
             # the .env file
-            decoded = self.fernet.decrypt(
-                token.encode(), ttl=self._timeout
-            ).decode()
+            decoded = self.fernet.decrypt(token.encode(), ttl=self._timeout).decode()
             data: dict[str, Any] = json.loads(decoded)
         except (
             json.JSONDecodeError,  # Invalid JSON

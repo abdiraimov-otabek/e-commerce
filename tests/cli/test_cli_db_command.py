@@ -77,9 +77,7 @@ class TestCLI:
         will catch that before we get to the command and ask for it.
         """
         cmd_patch = mocker.patch(self.command_patch_path)
-        result = CliRunner().invoke(
-            app, ["db", "revision", "-m", "New revision"]
-        )
+        result = CliRunner().invoke(app, ["db", "revision", "-m", "New revision"])
 
         cmd_patch.revision.assert_called_once_with(
             ALEMBIC_CFG,
@@ -154,9 +152,7 @@ class TestCLI:
             return_value=None,
         )
 
-        result = asyncio.run(
-            _create_single_user(fake, session_mock, is_admin=True)
-        )
+        result = asyncio.run(_create_single_user(fake, session_mock, is_admin=True))
 
         # Verify the result and that the correct calls were made
         assert result is True
@@ -181,16 +177,12 @@ class TestCLI:
         user_manager_mock = mocker.patch(
             "app.commands.db.UserManager.register",
             side_effect=[
-                HTTPException(
-                    status_code=400, detail=ErrorMessages.EMAIL_EXISTS
-                ),
+                HTTPException(status_code=400, detail=ErrorMessages.EMAIL_EXISTS),
                 None,  # Second call succeeds
             ],
         )
 
-        result = asyncio.run(
-            _create_single_user(fake, session_mock, is_admin=False)
-        )
+        result = asyncio.run(_create_single_user(fake, session_mock, is_admin=False))
 
         # Verify the result and that the correct calls were made
         assert result is True
@@ -210,9 +202,7 @@ class TestCLI:
             side_effect=HTTPException(status_code=500, detail="Server error"),
         )
 
-        result = asyncio.run(
-            _create_single_user(fake, session_mock, is_admin=False)
-        )
+        result = asyncio.run(_create_single_user(fake, session_mock, is_admin=False))
 
         # Verify the result and that the correct calls were made
         assert result is False
@@ -231,9 +221,7 @@ class TestCLI:
             side_effect=SQLAlchemyError("Database error"),
         )
 
-        result = asyncio.run(
-            _create_single_user(fake, session_mock, is_admin=False)
-        )
+        result = asyncio.run(_create_single_user(fake, session_mock, is_admin=False))
 
         # Verify the result and that the correct calls were made
         assert result is False
@@ -255,16 +243,12 @@ class TestCLI:
         )
 
         result = asyncio.run(
-            _create_single_user(
-                fake, session_mock, max_retries=2, is_admin=False
-            )
+            _create_single_user(fake, session_mock, max_retries=2, is_admin=False)
         )
 
         # Verify the result and that the correct calls were made
         assert result is False
-        assert (
-            user_manager_mock.call_count == 2
-        )  # Called twice due to retry limit
+        assert user_manager_mock.call_count == 2  # Called twice due to retry limit
 
     def test_populate_command(self, mocker) -> None:
         """Test the populate command with default count."""

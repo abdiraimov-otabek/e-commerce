@@ -27,12 +27,8 @@ class TestApiKeyAuth:
         """Test with valid user and API key."""
         # Create a user and API key
         _ = await UserManager.register(self.test_user, test_db)
-        user = await UserManager.get_user_by_email(
-            self.test_user["email"], test_db
-        )
-        _, raw_key = await ApiKeyManager.create_key(
-            user, "Test Key", None, test_db
-        )
+        user = await UserManager.get_user_by_email(self.test_user["email"], test_db)
+        _, raw_key = await ApiKeyManager.create_key(user, "Test Key", None, test_db)
 
         # Test the API key
         mock_req = mocker.patch(self.mock_request_path)
@@ -70,9 +66,7 @@ class TestApiKeyAuth:
         """Test with an inactive API key."""
         # Create a user and API key
         _ = await UserManager.register(self.test_user, test_db)
-        user = await UserManager.get_user_by_email(
-            self.test_user["email"], test_db
-        )
+        user = await UserManager.get_user_by_email(self.test_user["email"], test_db)
         api_key, raw_key = await ApiKeyManager.create_key(
             user, "Test Key", None, test_db
         )

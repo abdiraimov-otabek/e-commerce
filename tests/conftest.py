@@ -14,7 +14,7 @@ from typer.testing import CliRunner
 from app.config.helpers import get_project_root
 from app.database.db import Base, create_session_maker, get_database
 from app.main import app
-from app.managers.email import EmailManager
+from app.managers.email_manager import EmailManager
 
 if TYPE_CHECKING:
     from collections.abc import AsyncGenerator, Generator

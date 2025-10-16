@@ -7,7 +7,7 @@ import pytest
 from fastapi import status
 
 from app.config.settings import get_settings
-from app.schemas.email import EmailSchema, EmailTemplateSchema
+from app.schemas.email_schema import EmailSchema, EmailTemplateSchema
 
 
 class EmailData(TypedDict):

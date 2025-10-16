@@ -31,9 +31,7 @@ class TestCLI:
         self, runner: CliRunner, mocker, fake_user_data
     ) -> None:
         """Test successful creation of a user."""
-        mock_register = mocker.patch(
-            self.patch_register_user, return_value=None
-        )
+        mock_register = mocker.patch(self.patch_register_user, return_value=None)
 
         result = runner.invoke(
             app,
@@ -58,9 +56,7 @@ class TestCLI:
         self, runner: CliRunner, mocker, fake_user_data
     ) -> None:
         """Test successful creation of an admin user."""
-        mock_register = mocker.patch(
-            self.patch_register_user, return_value=None
-        )
+        mock_register = mocker.patch(self.patch_register_user, return_value=None)
 
         result = runner.invoke(
             app,
@@ -147,9 +143,7 @@ class TestCLI:
             f"{fake_user_data['password']}\n"
         )
 
-        mock_register = mocker.patch(
-            self.patch_register_user, return_value=None
-        )
+        mock_register = mocker.patch(self.patch_register_user, return_value=None)
 
         result = runner.invoke(app, ["user", "create"], input=user_input)
         assert result.exit_code == 0
@@ -166,9 +160,7 @@ class TestCLI:
             f"{fake_user_data['password']}\nYes\n"
         )
 
-        mock_register = mocker.patch(
-            self.patch_register_user, return_value=None
-        )
+        mock_register = mocker.patch(self.patch_register_user, return_value=None)
 
         result = runner.invoke(app, ["user", "create"], input=user_input)
         assert result.exit_code == 0

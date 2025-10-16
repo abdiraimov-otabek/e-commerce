@@ -81,9 +81,7 @@ class TestUserManager:  # pylint: disable=too-many-public-methods
             },
         ],
     )
-    async def test_create_user_missing_values(
-        self, test_db, create_data
-    ) -> None:
+    async def test_create_user_missing_values(self, test_db, create_data) -> None:
         """Test creating a user with missing values."""
         # If password is empty, we should get PASSWORD_INVALID error
         if "password" in create_data and not create_data["password"]:
@@ -214,13 +212,9 @@ class TestUserManager:  # pylint: disable=too-many-public-methods
     async def test_update_user_not_found(self, test_db) -> None:
         """Test updating a user that doesn't exist."""
         with pytest.raises(HTTPException, match=ErrorMessages.USER_INVALID):
-            await UserManager.update_user(
-                1, UserEditRequest(**self.test_user), test_db
-            )
+            await UserManager.update_user(1, UserEditRequest(**self.test_user), test_db)
 
-    async def test_update_user_not_found_raises_correct_error(
-        self, test_db
-    ) -> None:
+    async def test_update_user_not_found_raises_correct_error(self, test_db) -> None:
         """Test that updating a non-existent user raises USER_INVALID."""
         non_existent_id = 999
         user_data = UserEditRequest(
@@ -243,9 +237,7 @@ class TestUserManager:  # pylint: disable=too-many-public-methods
         """Test updating a user with an invalid password format raises error."""
         # First create a user
         await UserManager.register(self.test_user, test_db)
-        user = await UserManager.get_user_by_email(
-            self.test_user["email"], test_db
-        )
+        user = await UserManager.get_user_by_email(self.test_user["email"], test_db)
 
         # Mock hash_password to raise ValueError
         mocker.patch(
@@ -370,9 +362,7 @@ class TestUserManager:  # pylint: disable=too-many-public-methods
     async def test_get_user_by_email_not_found(self, test_db) -> None:
         """Ensure we get None if the user with email doesn't exist."""
         with pytest.raises(HTTPException, match=ErrorMessages.USER_INVALID):
-            await UserManager.get_user_by_email(
-                self.test_user["email"], test_db
-            )
+            await UserManager.get_user_by_email(self.test_user["email"], test_db)
 
     async def test_get_all_users(self, test_db) -> None:
         """Test getting all users."""
@@ -412,18 +402,14 @@ class TestUserManager:  # pylint: disable=too-many-public-methods
         with pytest.raises(HTTPException) as exc_info:
             await UserManager.register(test_data, test_db)
 
-        assert (
-            exc_info.value.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
-        )
+        assert exc_info.value.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
         assert exc_info.value.detail == ErrorMessages.PASSWORD_MISSING
 
     async def test_update_user_with_empty_password(self, test_db) -> None:
         """Test updating a user with an empty password."""
         # First create a user
         await UserManager.register(self.test_user, test_db)
-        user = await UserManager.get_user_by_email(
-            self.test_user["email"], test_db
-        )
+        user = await UserManager.get_user_by_email(self.test_user["email"], test_db)
 
         # Try to update with empty password - should keep existing password
         user_data = UserEditRequest(
@@ -433,14 +419,10 @@ class TestUserManager:  # pylint: disable=too-many-public-methods
             password="",  # Empty password should keep existing password
         )
 
-        updated_user = await UserManager.update_user(
-            user.id, user_data, test_db
-        )
+        updated_user = await UserManager.update_user(user.id, user_data, test_db)
         assert updated_user is not None
         # Password should remain unchanged
-        assert verify_password(
-            self.test_user["password"], updated_user.password
-        )
+        assert verify_password(self.test_user["password"], updated_user.password)
 
     async def test_change_password_with_invalid_format(self, test_db) -> None:
         """Test changing password with an invalid format."""
@@ -486,9 +468,7 @@ class TestUserManager:  # pylint: disable=too-many-public-methods
     async def test_update_user_raises_not_found(self, test_db, mocker) -> None:
         """Test update_user raises USER_NOT_FOUND if get_user_by_id is None."""
         # Mock get_user_by_id to return None
-        mocker.patch(
-            "app.managers.user.UserManager.get_user_by_id", return_value=None
-        )
+        mocker.patch("app.managers.user.UserManager.get_user_by_id", return_value=None)
 
         user_data = UserEditRequest(
             email="new@email.com",
@@ -556,9 +536,7 @@ class TestUserManager:  # pylint: disable=too-many-public-methods
         assert len(result) == 1
         assert result[0].email == "john.doe@example.com"
 
-    async def test_search_users_specific_field_exact_match(
-        self, test_db
-    ) -> None:
+    async def test_search_users_specific_field_exact_match(self, test_db) -> None:
         """Test searching specific fields with exact match."""
         # Create test users
         await UserManager.register(self.test_user, test_db)
@@ -592,9 +570,7 @@ class TestUserManager:  # pylint: disable=too-many-public-methods
         assert len(result) == 1
         assert result[0].last_name == "Doe"
 
-    async def test_search_users_specific_field_partial_match(
-        self, test_db
-    ) -> None:
+    async def test_search_users_specific_field_partial_match(self, test_db) -> None:
         """Test searching specific fields with partial match."""
         # Create test users
         await UserManager.register(self.test_user, test_db)

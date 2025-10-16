@@ -18,9 +18,7 @@ class TestCLIKeys:
         assert result.exit_code == 1
         assert "Error: Please use only one flag at a time" in result.output
 
-    def test_secret_key_generation_no_env(
-        self, runner: CliRunner, mocker
-    ) -> None:
+    def test_secret_key_generation_no_env(self, runner: CliRunner, mocker) -> None:
         """Test secret key generation when .env file doesn't exist."""
         # Mock the necessary functions
         mock_exists = mocker.patch.object(Path, "exists", return_value=False)
@@ -29,9 +27,7 @@ class TestCLIKeys:
         mock_confirm = mocker.patch("typer.confirm", return_value=True)
 
         # Mock secrets.token_hex to return a predictable value
-        mock_token = mocker.patch(
-            "secrets.token_hex", return_value="mock_secret_key"
-        )
+        mock_token = mocker.patch("secrets.token_hex", return_value="mock_secret_key")
 
         result = runner.invoke(app, ["keys", "--secret"])
 
@@ -50,9 +46,7 @@ class TestCLIKeys:
         )
         mock_confirm.assert_called_once()
 
-    def test_secret_key_generation_env_exists(
-        self, runner: CliRunner, mocker
-    ) -> None:
+    def test_secret_key_generation_env_exists(self, runner: CliRunner, mocker) -> None:
         """Test secret key generation when .env file exists."""
         # Mock the necessary functions
         mock_exists = mocker.patch.object(Path, "exists", return_value=True)
@@ -61,9 +55,7 @@ class TestCLIKeys:
         mock_confirm = mocker.patch("typer.confirm", return_value=True)
 
         # Mock secrets.token_hex to return a predictable value
-        mock_token = mocker.patch(
-            "secrets.token_hex", return_value="mock_secret_key"
-        )
+        mock_token = mocker.patch("secrets.token_hex", return_value="mock_secret_key")
 
         result = runner.invoke(app, ["keys", "--secret"])
 
@@ -92,9 +84,7 @@ class TestCLIKeys:
         mock_confirm = mocker.patch("typer.confirm", return_value=False)
 
         # Mock secrets.token_hex to return a predictable value
-        mock_token = mocker.patch(
-            "secrets.token_hex", return_value="mock_secret_key"
-        )
+        mock_token = mocker.patch("secrets.token_hex", return_value="mock_secret_key")
 
         result = runner.invoke(app, ["keys", "--secret"])
 
@@ -109,9 +99,7 @@ class TestCLIKeys:
         mock_token.assert_called_once_with(32)
         mock_confirm.assert_called_once()
 
-    def test_admin_key_generation_no_env(
-        self, runner: CliRunner, mocker
-    ) -> None:
+    def test_admin_key_generation_no_env(self, runner: CliRunner, mocker) -> None:
         """Test admin key generation when .env file doesn't exist."""
         # Mock the necessary functions
         mock_exists = mocker.patch.object(Path, "exists", return_value=False)
@@ -132,9 +120,7 @@ class TestCLIKeys:
         assert "Random ADMIN_PAGES_ENCRYPTION_KEY" in result.output
         assert "mock_admin_key_in_bytes" in result.output
         assert "Warning: .env file not found" in result.output
-        assert (
-            "Successfully updated ADMIN_PAGES_ENCRYPTION_KEY" in result.output
-        )
+        assert "Successfully updated ADMIN_PAGES_ENCRYPTION_KEY" in result.output
 
         # Verify the mocks were called correctly
         mock_exists.assert_called_once()
@@ -147,9 +133,7 @@ class TestCLIKeys:
         )
         mock_confirm.assert_called_once()
 
-    def test_admin_key_generation_env_exists(
-        self, runner: CliRunner, mocker
-    ) -> None:
+    def test_admin_key_generation_env_exists(self, runner: CliRunner, mocker) -> None:
         """Test admin key generation when .env file exists."""
         # Mock the necessary functions
         mock_exists = mocker.patch.object(Path, "exists", return_value=True)
@@ -170,9 +154,7 @@ class TestCLIKeys:
         assert "Random ADMIN_PAGES_ENCRYPTION_KEY" in result.output
         assert "mock_admin_key_in_bytes" in result.output
         assert "Warning: .env file not found" not in result.output
-        assert (
-            "Successfully updated ADMIN_PAGES_ENCRYPTION_KEY" in result.output
-        )
+        assert "Successfully updated ADMIN_PAGES_ENCRYPTION_KEY" in result.output
 
         # Verify the mocks were called correctly
         mock_exists.assert_called_once()
@@ -223,9 +205,7 @@ class TestCLIKeys:
             "app.commands.keys.set_key",
             side_effect=PermissionError("Permission denied"),
         )
-        mock_token = mocker.patch(
-            "secrets.token_hex", return_value="mock_secret_key"
-        )
+        mock_token = mocker.patch("secrets.token_hex", return_value="mock_secret_key")
 
         with pytest.raises(PermissionError) as exc_info:
             runner.invoke(app, ["keys", "--secret"], catch_exceptions=False)
@@ -247,9 +227,7 @@ class TestCLIKeys:
             "app.commands.keys.set_key",
             side_effect=OSError("Some other error"),
         )
-        mock_token = mocker.patch(
-            "secrets.token_hex", return_value="mock_secret_key"
-        )
+        mock_token = mocker.patch("secrets.token_hex", return_value="mock_secret_key")
 
         with pytest.raises(OSError, match="Some other error") as exc_info:
             runner.invoke(app, ["keys", "--secret"], catch_exceptions=False)

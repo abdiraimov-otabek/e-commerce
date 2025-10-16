@@ -183,9 +183,7 @@ def show(
             async with async_session() as session:
                 user = await UserManager.get_user_by_id(user_id, session)
         except HTTPException as exc:
-            rprint(
-                f"\n[red]-> ERROR getting User details : [bold]{exc.detail}\n"
-            )
+            rprint(f"\n[red]-> ERROR getting User details : [bold]{exc.detail}\n")
             raise typer.Exit(1) from exc
         else:
             return user
@@ -221,9 +219,7 @@ def verify(
 
     user = aiorun(_verify_user(user_id))
     if user:
-        rprint(
-            f"\n[green]-> User [bold]{user_id}[/bold] verified succesfully.\n"
-        )
+        rprint(f"\n[green]-> User [bold]{user_id}[/bold] verified succesfully.\n")
     else:
         rprint("\n[red]-> ERROR verifying User : [bold]User not found\n")
         raise typer.Exit(1)
@@ -269,9 +265,7 @@ def ban(
         )
         show_table("", [user])
     else:
-        rprint(
-            "\n[red]-> ERROR banning or unbanning User : [bold]User not found\n"
-        )
+        rprint("\n[red]-> ERROR banning or unbanning User : [bold]User not found\n")
         raise typer.Exit(1)
 
 
@@ -293,9 +287,7 @@ def admin(
 ) -> None:
     """Make a user an admin or remove admin status."""
 
-    async def _toggle_admin(
-        user_id: int, *, remove: Optional[bool]
-    ) -> User | None:
+    async def _toggle_admin(user_id: int, *, remove: Optional[bool]) -> User | None:
         """Async function to toggle admin status for a user."""
         try:
             async with async_session() as session:
@@ -384,9 +376,7 @@ def search(
     # Convert string field to enum and get display name
     field_enum = getattr(SearchField, field.upper(), SearchField.ALL)
     field_display = (
-        "all fields"
-        if field_enum == SearchField.ALL
-        else field_enum.name.lower()
+        "all fields" if field_enum == SearchField.ALL else field_enum.name.lower()
     )
 
     async def _search_users() -> list[User]:
@@ -412,6 +402,5 @@ def search(
         )
     else:
         rprint(
-            "\n[yellow]-> No users found matching "
-            f"'[bold]{search_term}[/bold]'\n"
+            "\n[yellow]-> No users found matching " f"'[bold]{search_term}[/bold]'\n"
         )

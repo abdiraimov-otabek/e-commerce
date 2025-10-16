@@ -27,9 +27,7 @@ def openapi(
     You can also specify a filename using `--filename`.
     """
     openapi_file = Path(prefix, filename)
-    rprint(
-        f"Generating OpenAPI schema at [bold]{openapi_file.resolve()}[/bold]\n"
-    )
+    rprint(f"Generating OpenAPI schema at [bold]{openapi_file.resolve()}[/bold]\n")
     with openapi_file.open(mode="w") as f:
         json.dump(
             get_openapi(

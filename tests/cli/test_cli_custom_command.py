@@ -28,6 +28,9 @@ if TYPE_CHECKING:
 
     from typer.testing import CliRunner
 
+EXIT_CODE_METADATA_ERROR = 2
+EXIT_CODE_TOML_ERROR = 3
+
 
 def is_running_in_docker() -> bool:
     """Check for the .dockerenv file."""
@@ -86,9 +89,7 @@ authors = [{name='Old Author',email='oldauthor@example.com'}]""",
             return_value=Path("/home/test"),
         )
 
-        mocker.patch(
-            "app.commands.custom.get_data", return_value=self.test_data
-        )
+        mocker.patch("app.commands.custom.get_data", return_value=self.test_data)
 
     def test_no_command_should_give_help(self, runner: CliRunner) -> None:
         """Test that running with no command should give help."""
@@ -134,9 +135,7 @@ authors = [{name='Old Author',email='oldauthor@example.com'}]""",
         """
         # Setup
         fs.create_dir(str(self.home_dir))
-        metadata_file_path = str(
-            self.home_dir / self.metadata_file
-        )  # Use string path
+        metadata_file_path = str(self.home_dir / self.metadata_file)  # Use string path
         mocker.patch(
             self.mock_get_config_path,
             return_value=self.home_dir / self.metadata_file,
@@ -161,9 +160,9 @@ authors = [{name='Old Author',email='oldauthor@example.com'}]""",
         ), "Metadata file does not exist after init."
         with open(metadata_file_path) as file:  # noqa: PTH123
             content = file.read()
-            assert content != original_content, (
-                "Metadata file was not overwritten with default content."
-            )
+            assert (
+                content != original_content
+            ), "Metadata file was not overwritten with default content."
 
     def test_init_function_fails_write(self, fs, mocker, capsys) -> None:
         """Test that running 'init' should fail if it cannot write."""
@@ -208,9 +207,7 @@ authors = [{name='Old Author',email='oldauthor@example.com'}]""",
 
         assert isinstance(licenses, list)
         assert len(licenses) > 0
-        assert all(
-            license_name in expected_licenses for license_name in licenses
-        )
+        assert all(license_name in expected_licenses for license_name in licenses)
 
     def test_case_insensitive_dict(self) -> None:
         """Test that the case insensitive License function works."""
@@ -249,9 +246,7 @@ authors = [{name='Old Author',email='oldauthor@example.com'}]""",
         """Test that the choose license function works."""
         mock_stdin = mocker.patch.object(sys, "stdin", io.StringIO("mit\n"))
 
-        license_string = ", ".join(
-            [license_name["name"] for license_name in LICENCES]
-        )
+        license_string = ", ".join([license_name["name"] for license_name in LICENCES])
 
         license_choice = choose_license()
 
@@ -271,12 +266,10 @@ authors = [{name='Old Author',email='oldauthor@example.com'}]""",
         result = runner.invoke(app, ["custom", "metadata"], input="\n")
 
         # Verify command execution was successful
-        assert result.exit_code == 0, (
-            "The command did not complete successfully"
-        )
-        assert "You have entered the following data:" in result.output, (
-            "Expected output was not found"
-        )
+        assert result.exit_code == 0, "The command did not complete successfully"
+        assert (
+            "You have entered the following data:" in result.output
+        ), "Expected output was not found"
 
         # Verify the contents of metadata.py in the app/config subdirectory
         metadata_path = "/home/test/app/config/metadata.py"
@@ -285,41 +278,37 @@ authors = [{name='Old Author',email='oldauthor@example.com'}]""",
             for key, value in self.test_data.items():
                 if key == "version":
                     continue  # no version in metadata.py
-                if isinstance(
-                    value, dict
-                ):  # For nested structures like 'license'
+                if isinstance(value, dict):  # For nested structures like 'license'
                     for nested_key, nested_value in value.items():
-                        assert str(nested_value) in metadata_contents, (
-                            f"{nested_key} was not updated in metadata.py"
-                        )
+                        assert (
+                            str(nested_value) in metadata_contents
+                        ), f"{nested_key} was not updated in metadata.py"
                 else:
-                    assert str(value) in metadata_contents, (
-                        f"{key} was not updated correctly in metadata.py"
-                    )
+                    assert (
+                        str(value) in metadata_contents
+                    ), f"{key} was not updated correctly in metadata.py"
 
         # Verify the contents of pyproject.toml were updated
         with open("/home/test/pyproject.toml") as f:  # noqa: PTH123
             pyproject_contents = f.read()
-            assert str(self.test_data["version"]) in pyproject_contents, (
-                "pyproject.toml version was not updated correctly"
-            )
-            assert str(self.test_data["name"]) in pyproject_contents, (
-                "pyproject.toml title was not updated correctly"
-            )
+            assert (
+                str(self.test_data["version"]) in pyproject_contents
+            ), "pyproject.toml version was not updated correctly"
+            assert (
+                str(self.test_data["name"]) in pyproject_contents
+            ), "pyproject.toml title was not updated correctly"
 
-    @pytest.mark.skipif(
-        is_running_in_docker(), reason="This test fails under docker"
-    )
-    def test_full_metadata_command_cant_write_metadata(
-        self, runner, fs_setup
-    ) -> None:
+    @pytest.mark.skipif(is_running_in_docker(), reason="This test fails under docker")
+    def test_full_metadata_command_cant_write_metadata(self, runner, fs_setup) -> None:
         """Run the metadata command and verify the output."""
         os.chmod("/home/test/app/config/metadata.py", 0)  # noqa: PTH101
 
         result = runner.invoke(app, ["custom", "metadata"], input="\n")
 
         # Verify command execution was not successful
-        assert result.exit_code == 2, "The metadata file should not be writable"  # noqa: PLR2004
+        assert (
+            result.exit_code == EXIT_CODE_METADATA_ERROR
+        ), "The metadata file should not be writable"
         assert "Cannot Write the metadata" in result.output
 
     def test_metadata_command_cant_write_toml(self, runner, fs_setup) -> None:
@@ -329,14 +318,12 @@ authors = [{name='Old Author',email='oldauthor@example.com'}]""",
 
         result = runner.invoke(app, ["custom", "metadata"], input="\n")
 
-        assert result.exit_code == 3, (  # noqa: PLR2004
-            "The pyproject.toml file should not be writable"
-        )
+        assert (
+            result.exit_code == EXIT_CODE_TOML_ERROR
+        ), "The pyproject.toml file should not be writable"
         assert "Cannot update the pyproject.toml file" in result.output
 
-    def test_metadata_module_not_found(
-        self, monkeypatch, fs_setup, capsys
-    ) -> None:
+    def test_metadata_module_not_found(self, monkeypatch, fs_setup, capsys) -> None:
         """This is a convoluted (hacky!) test to simulate a ModuleNotFoundError.
 
         It tests the case where the 'metadata' module is not found. Note that if
@@ -346,9 +333,7 @@ authors = [{name='Old Author',email='oldauthor@example.com'}]""",
         # Store references to the original modules
         original_modules = {}
         for name in list(sys.modules.keys()):
-            if name == "app.config.metadata" or name.startswith(
-                "app.config.metadata."
-            ):
+            if name == "app.config.metadata" or name.startswith("app.config.metadata."):
                 original_modules[name] = sys.modules.pop(name)
 
         # Define a custom import function that raises ModuleNotFoundError for
@@ -364,9 +349,7 @@ authors = [{name='Old Author',email='oldauthor@example.com'}]""",
 
             We want to to raise ModuleNotFoundError for our specific module.
             """
-            if name == "app.config.metadata" or name.startswith(
-                "app.config.metadata."
-            ):
+            if name == "app.config.metadata" or name.startswith("app.config.metadata."):
                 err = f"No module named '{name}'"
                 raise ModuleNotFoundError(err)
             return original_import(name, globals, locals, fromlist, level)

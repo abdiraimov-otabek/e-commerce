@@ -37,6 +37,7 @@ dependencies = [
     "orjson>=3.10",
     "fastapi-debug-toolbar>=0.6.3",
     "faker>=36.1.1",
+    "pytest-xdist>=3.8.0",
 ]
 
 authors = [

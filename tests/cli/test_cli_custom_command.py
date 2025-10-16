@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import importlib
 import io
 import os
 import sys
@@ -361,11 +362,9 @@ authors = [{name='Old Author',email='oldauthor@example.com'}]""",
             the 'pytest.raises' context manager and upsetting 'ruff' linter.
             """
             if "app.commands.custom" in sys.modules:
-                import importlib
-
                 importlib.reload(sys.modules["app.commands.custom"])
             else:
-                import app.commands.custom  # noqa: F401, PLC0415
+                import app.commands.custom  # noqa: F401
 
         # Store and patch the import mechanism
         original_import = __import__

@@ -21,9 +21,9 @@ jobs:
       postgres:
         image: postgres:17
         env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: fastapi-template-test
+          POSTGRES_USER: otabek-abdiraimov
+          POSTGRES_PASSWORD: 1212
+          POSTGRES_DB: ecommerce_db
         ports:
           - 5432:5432
         options:
@@ -44,8 +44,7 @@ jobs:
 
       - name: Run tests
         # For example, using `pytest`
-        run:
-          uv run --all-extras -p ${{ matrix.python-version }} pytest tests
+        run: uv run --all-extras -p ${{ matrix.python-version }} pytest tests
           --cov-report=xml
 
       - name: Run codacy-coverage-reporter

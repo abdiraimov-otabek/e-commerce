@@ -51,11 +51,11 @@ class Settings(BaseSettings):
     test_with_postgres: bool = False
 
     # Setup the TEST Postgresql database.
-    test_db_user: str = "my_db_username"
-    test_db_password: str = "Sup3rS3cr3tP455w0rd"  # noqa: S105
+    test_db_user: str = "otabek-abdiraimov"
+    test_db_password: str = "1212"  # noqa: S105
     test_db_address: str = "localhost"
     test_db_port: str = "5432"
-    test_db_name: str = "api-template-test"
+    test_db_name: str = "ecommerce_test_db"
 
     # JTW secret Key
     secret_key: str = "32DigitsofSecretNumbers"  # noqa: S105

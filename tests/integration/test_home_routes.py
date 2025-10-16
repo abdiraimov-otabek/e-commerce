@@ -28,6 +28,10 @@ class TestHomeRoutes:
         """Test that the favicon exists and can be served."""
         response = await client.get("/favicon.ico")
         assert response.status_code == status.HTTP_200_OK
-        assert response.headers["content-type"] == "image/vnd.microsoft.icon"
+        # Accept both official and legacy media types for favicon
+        assert response.headers["content-type"] in (
+            "image/vnd.microsoft.icon",
+            "image/x-icon",
+        )
         # Ensure we actually got some content
         assert len(response.content) > 0

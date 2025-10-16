@@ -13,7 +13,7 @@ from pydantic import SecretStr
 from app.config.settings import get_settings
 
 if TYPE_CHECKING:  # pragma: no cover
-    from app.schemas.email_schema import EmailSchema, EmailTemplateSchema
+    from app.managers.email_schema_schema import EmailSchema, EmailTemplateSchema
 
 
 class EmailManager:

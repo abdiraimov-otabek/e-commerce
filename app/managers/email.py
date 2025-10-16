@@ -50,7 +50,10 @@ class EmailManager:
 
         fm = FastMail(self.conf)
         await fm.send_message(message)
-        return JSONResponse(status_code=200, content={"message": "email has been sent"})
+        return JSONResponse(
+            status_code=200,
+            content={"message": "email has been sent"},
+        )
 
     def background_send(
         self, backgroundtasks: BackgroundTasks, email_data: "EmailSchema"
@@ -78,5 +81,7 @@ class EmailManager:
         )
         fm = FastMail(self.conf)
         backgroundtasks.add_task(
-            fm.send_message, message, template_name=email_data.template_name
+            fm.send_message,
+            message,
+            template_name=email_data.template_name,
         )

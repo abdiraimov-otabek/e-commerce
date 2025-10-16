@@ -363,8 +363,6 @@ authors = [{name='Old Author',email='oldauthor@example.com'}]""",
             """
             if "app.commands.custom" in sys.modules:
                 importlib.reload(sys.modules["app.commands.custom"])
-            else:
-                import app.commands.custom  # noqa: F401
 
         # Store and patch the import mechanism
         original_import = __import__

@@ -365,7 +365,7 @@ authors = [{name='Old Author',email='oldauthor@example.com'}]""",
 
                 importlib.reload(sys.modules["app.commands.custom"])
             else:
-                import app.commands.custom  # noqa: F401
+                import app.commands.custom  # noqa: F401, PLC0415
 
         # Store and patch the import mechanism
         original_import = __import__

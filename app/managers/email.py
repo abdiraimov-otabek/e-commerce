@@ -39,7 +39,7 @@ class EmailManager:
             SUPPRESS_SEND=1 if suppress_send else 0,
         )
 
-    async def simple_send(self, email_data: EmailSchema) -> JSONResponse:
+    async def simple_send(self, email_data: "EmailSchema") -> JSONResponse:
         """Send a plain email with a subject and message."""
         message = MessageSchema(
             subject=email_data.subject,
@@ -50,12 +50,10 @@ class EmailManager:
 
         fm = FastMail(self.conf)
         await fm.send_message(message)
-        return JSONResponse(
-            status_code=200, content={"message": "email has been sent"}
-        )
+        return JSONResponse(status_code=200, content={"message": "email has been sent"})
 
     def background_send(
-        self, backgroundtasks: BackgroundTasks, email_data: EmailSchema
+        self, backgroundtasks: BackgroundTasks, email_data: "EmailSchema"
     ) -> None:
         """Send an email in the background."""
         message = MessageSchema(
@@ -69,7 +67,7 @@ class EmailManager:
         backgroundtasks.add_task(fm.send_message, message)
 
     def template_send(
-        self, backgroundtasks: BackgroundTasks, email_data: EmailTemplateSchema
+        self, backgroundtasks: BackgroundTasks, email_data: "EmailTemplateSchema"
     ) -> None:
         """Send an email using a Jinja Template."""
         message = MessageSchema(

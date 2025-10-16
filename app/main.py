@@ -7,10 +7,10 @@ from typing import Any
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import ORJSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi_pagination import add_pagination
 from sqlalchemy.exc import SQLAlchemyError
-from fastapi.responses import ORJSONResponse
 
 from app.admin import register_admin
 from app.config.helpers import get_api_version, get_project_root

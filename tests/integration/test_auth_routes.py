@@ -54,9 +54,7 @@ class TestAuthRoutes:
     #                          test '/register' route                          #
     # ------------------------------------------------------------------------ #
     @pytest.mark.asyncio
-    async def test_register_new_user(
-        self, client: AsyncClient, test_db: AsyncSession, mocker
-    ) -> None:
+    async def test_register_new_user(self, client: AsyncClient, test_db: AsyncSession, mocker) -> None:
         """Ensure a new user can register."""
         # disable email sending by mocking the function
         mock_send = mocker.patch(self.email_fn_to_patch)
@@ -95,9 +93,7 @@ class TestAuthRoutes:
         mock_send.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_register_duplicate_user(
-        self, client: AsyncClient, test_db: AsyncSession, mocker
-    ) -> None:
+    async def test_register_duplicate_user(self, client: AsyncClient, test_db: AsyncSession, mocker) -> None:
         """Ensure a duplicate user cant register."""
         _ = mocker.patch(self.email_fn_to_patch)
 
@@ -143,9 +139,7 @@ class TestAuthRoutes:
         assert verify_password(post_body["password"], user_from_db.password)
 
     @pytest.mark.asyncio
-    async def test_register_new_user_with_bad_email(
-        self, client, test_db, mocker
-    ) -> None:
+    async def test_register_new_user_with_bad_email(self, client, test_db, mocker) -> None:
         """Ensure an invalid email address fails, and no email is sent."""
         # mock the email sending function
         mock_send = mocker.patch(self.email_fn_to_patch)
@@ -199,9 +193,7 @@ class TestAuthRoutes:
         ],
     )
     @pytest.mark.asyncio
-    async def test_register_new_user_with_missing_data(
-        self, client, test_db, mocker, post_body
-    ) -> None:
+    async def test_register_new_user_with_missing_data(self, client, test_db, mocker, post_body) -> None:
         """Ensure registering with missing data fails, and no email is sent."""
         # mock the email sending function
         mock_send = mocker.patch(self.email_fn_to_patch)
@@ -239,9 +231,7 @@ class TestAuthRoutes:
         assert response.json()["detail"] == UserErrorMessages.NOT_VERIFIED
 
     @pytest.mark.asyncio
-    async def test_verified_user_can_login(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_verified_user_can_login(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Ensure a validated user can log in."""
         test_db.add(User(**self.test_user))
         await test_db.commit()
@@ -279,9 +269,7 @@ class TestAuthRoutes:
             },
         ],
     )
-    async def test_cant_login_with_wrong_email_or_password(
-        self, client, test_db, post_body
-    ) -> None:
+    async def test_cant_login_with_wrong_email_or_password(self, client, test_db, post_body) -> None:
         """Ensure the user cant login with wrong email or password."""
         test_db.add(User(**self.test_user))
         await test_db.commit()
@@ -307,9 +295,7 @@ class TestAuthRoutes:
             },
         ],
     )
-    async def test_cant_login_with_missing_email_or_password(
-        self, client, test_db, post_body
-    ) -> None:
+    async def test_cant_login_with_missing_email_or_password(self, client, test_db, post_body) -> None:
         """Ensure the user cant login with missing email or password."""
         test_db.add(User(**self.test_user))
         await test_db.commit()
@@ -386,9 +372,7 @@ class TestAuthRoutes:
         assert isinstance(refresh_response.json()["token"], str)
 
     @pytest.mark.asyncio
-    async def test_cant_refresh_token_with_invalid_refresh_token(
-        self, client, test_db
-    ) -> None:
+    async def test_cant_refresh_token_with_invalid_refresh_token(self, client, test_db) -> None:
         """Ensure the user cant refresh the token with invalid refresh token."""
         test_db.add(User(**self.test_user))
         await test_db.commit()
@@ -408,9 +392,7 @@ class TestAuthRoutes:
     # ------------------------------------------------------------------------ #
 
     @pytest.mark.asyncio
-    async def test_verify_user(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_verify_user(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Test we can verify a user."""
         test_db.add(User(**self.test_unverified_user))
         await test_db.commit()

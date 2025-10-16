@@ -142,9 +142,7 @@ def populate(
     """
     num_admins, num_regular_users = calc_admin_count(count)
 
-    rprint(
-        f"\nCreating {num_regular_users} regular users " f"and {num_admins} admins..."
-    )
+    rprint(f"\nCreating {num_regular_users} regular users and {num_admins} admins...")
 
     # Run the async function to populate the database
     aiorun(_populate_db(num_regular_users, num_admins))
@@ -229,14 +227,9 @@ async def _create_single_user(
             if exc.detail == ErrorMessages.EMAIL_EXISTS:
                 retries += 1
                 if retries < max_retries:
-                    rprint(
-                        "  [yellow]Email already exists, retrying... "
-                        f"({retries}/{max_retries})"
-                    )
+                    rprint(f"  [yellow]Email already exists, retrying... ({retries}/{max_retries})")
                 else:
-                    rprint(
-                        "  [red]Failed to create user after " f"{max_retries} attempts"
-                    )
+                    rprint(f"  [red]Failed to create user after {max_retries} attempts")
                     return False
             else:
                 # For other HTTP exceptions, raise them
@@ -277,10 +270,7 @@ async def _populate_db(num_regular_users: int, num_admins: int) -> None:
             await session.commit()
 
             # Final summary
-            rprint(
-                f"\nSuccessfully created {user_count} regular users "
-                f"and {admin_count} admins"
-            )
+            rprint(f"\nSuccessfully created {user_count} regular users and {admin_count} admins")
 
     except SQLAlchemyError as exc:
         rprint(f"\n[red]-> Database error: [bold]{exc}\n")
@@ -361,11 +351,7 @@ def _validate_csv_file(csv_file: Path) -> list[dict[str, str]]:
             "last_name",
         ]
         if not all(field in csv_reader.fieldnames for field in required_fields):
-            rprint(
-                "[red]Error: CSV file must contain the following "
-                "columns: "
-                f"{', '.join(required_fields)}"
-            )
+            rprint(f"[red]Error: CSV file must contain the following columns: {', '.join(required_fields)}")
             raise typer.Exit(1)
 
         # Convert to list to avoid reading the file twice
@@ -413,42 +399,30 @@ async def _seed_users_from_csv(csv_file: Path) -> None:
                 except HTTPException as exc:
                     # Check for duplicate email error specifically
                     if exc.detail == ErrorMessages.EMAIL_EXISTS:
-                        rprint(
-                            f"  [yellow]Skipped: {user_data['email']} "
-                            "(already exists)"
-                        )
+                        rprint(f"  [yellow]Skipped: {user_data['email']} (already exists)")
                         duplicate_count += 1
                     else:
-                        rprint(
-                            f"  [yellow]Failed: {user_data['email']} - " f"{exc.detail}"
-                        )
+                        rprint(f"  [yellow]Failed: {user_data['email']} - {exc.detail}")
                         error_count += 1
                     # Rollback this transaction
                     await session.rollback()
 
                 except (ValueError, KeyError) as e:
                     # Handle validation errors
-                    rprint(
-                        f"  [yellow]Failed: {row.get('email', 'unknown')} - " f"{e!r}"
-                    )
+                    rprint(f"  [yellow]Failed: {row.get('email', 'unknown')} - {e!r}")
                     error_count += 1
                     await session.rollback()
 
                 except SQLAlchemyError as e:
                     # Handle database errors with a cleaner message
                     error_msg = str(e).split("\n")[0]  # Just get the first line
-                    rprint(
-                        f"  [yellow]Database error: "
-                        f"{row.get('email', 'unknown')} - {error_msg}"
-                    )
+                    rprint(f"  [yellow]Database error: {row.get('email', 'unknown')} - {error_msg}")
                     error_count += 1
                     await session.rollback()
 
         # Final summary with more detailed information
         rprint(
-            f"\nSummary: {success_count} users created, "
-            f"{duplicate_count} duplicates skipped, "
-            f"{error_count} errors\n"
+            f"\nSummary: {success_count} users created, {duplicate_count} duplicates skipped, {error_count} errors\n"
         )
 
     except SQLAlchemyError as exc:

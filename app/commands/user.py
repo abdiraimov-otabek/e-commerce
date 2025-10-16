@@ -116,10 +116,7 @@ def create(
                 await session.commit()
 
                 user_level = "Admin" if admin else ""
-                rprint(
-                    f"\n[green]-> {user_level} User [bold]{user_data['email']}"
-                    "[/bold] added succesfully.\n"
-                )
+                rprint(f"\n[green]-> {user_level} User [bold]{user_data['email']}[/bold] added succesfully.\n")
         except HTTPException as exc:
             rprint(f"\n[red]-> ERROR adding User : [bold]{exc.detail}\n")
             raise typer.Exit(1) from exc
@@ -259,10 +256,7 @@ def ban(
 
     user = aiorun(_ban_user(user_id, unban=unban))
     if user:
-        rprint(
-            f"\n[green]-> User [bold]{user_id}[/bold] "
-            f"[red]{'UN' if unban else ''}BANNED[/red] succesfully."
-        )
+        rprint(f"\n[green]-> User [bold]{user_id}[/bold] [red]{'UN' if unban else ''}BANNED[/red] succesfully.")
         show_table("", [user])
     else:
         rprint("\n[red]-> ERROR banning or unbanning User : [bold]User not found\n")
@@ -304,10 +298,7 @@ def admin(
     user = aiorun(_toggle_admin(user_id, remove=remove))
     if user:
         status = "removed from" if remove else "granted to"
-        rprint(
-            f"\n[green]-> Admin status [bold]{status}[/bold] "
-            f"User [bold]{user_id}[/bold] succesfully."
-        )
+        rprint(f"\n[green]-> Admin status [bold]{status}[/bold] User [bold]{user_id}[/bold] succesfully.")
         show_table("", [user])
     else:
         rprint("\n[red]-> ERROR changing admin status : [bold]User not found\n")
@@ -341,10 +332,7 @@ def delete(
     user = aiorun(_delete_user(user_id))
 
     if user:
-        rprint(
-            f"\n[green]-> User [bold]{user_id}[/bold] "
-            f"[red]DELETED[/red] succesfully."
-        )
+        rprint(f"\n[green]-> User [bold]{user_id}[/bold] [red]DELETED[/red] succesfully.")
     else:
         rprint("\n[red]-> ERROR deleting that User : [bold]User not found\n")
         raise typer.Exit(1)
@@ -375,17 +363,13 @@ def search(
     """Search for users by email, first name, or last name."""
     # Convert string field to enum and get display name
     field_enum = getattr(SearchField, field.upper(), SearchField.ALL)
-    field_display = (
-        "all fields" if field_enum == SearchField.ALL else field_enum.name.lower()
-    )
+    field_display = "all fields" if field_enum == SearchField.ALL else field_enum.name.lower()
 
     async def _search_users() -> list[User]:
         """Async function to search for users."""
         try:
             async with async_session() as session:
-                query = await UserManager.search_users(
-                    search_term, field_enum, exact_match=exact
-                )
+                query = await UserManager.search_users(search_term, field_enum, exact_match=exact)
                 result = await session.execute(query)
                 return list(result.scalars().all())
         except SQLAlchemyError as exc:
@@ -396,11 +380,8 @@ def search(
     if users:
         match_type = "exact" if exact else "partial"
         show_table(
-            f"Users matching '{search_term}' in {field_display} "
-            f"({match_type} match)",
+            f"Users matching '{search_term}' in {field_display} ({match_type} match)",
             users,
         )
     else:
-        rprint(
-            "\n[yellow]-> No users found matching " f"'[bold]{search_term}[/bold]'\n"
-        )
+        rprint(f"\n[yellow]-> No users found matching '[bold]{search_term}[/bold]'\n")

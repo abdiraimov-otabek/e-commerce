@@ -67,8 +67,7 @@ class TestLifespan:
         log_messages = [(record.levelname, record.message) for record in caplog.records]
 
         assert any(
-            record.levelname == "ERROR"
-            and "Have you set up your .env file??" in record.message
+            record.levelname == "ERROR" and "Have you set up your .env file??" in record.message
             for record in caplog.records
         ), "Expected error log not found"
         assert (
@@ -76,9 +75,7 @@ class TestLifespan:
             "Clearing routes and enabling error message.",
         ) in log_messages, "Expected warning log not found"
 
-    async def test_lifespan_clears_routes_and_enables_error_message(
-        self, mocker
-    ) -> None:
+    async def test_lifespan_clears_routes_and_enables_error_message(self, mocker) -> None:
         """Ensure the lifespan clears routes and enables error on fail."""
         app = FastAPI()
         mock_session = mocker.patch(self.mock_session)
@@ -88,7 +85,4 @@ class TestLifespan:
 
         assert len(app.routes) == 2  # noqa: PLR2004
 
-        assert any(
-            isinstance(route, APIRoute) and route.name == "catch_all"
-            for route in app.routes
-        )
+        assert any(isinstance(route, APIRoute) and route.name == "catch_all" for route in app.routes)

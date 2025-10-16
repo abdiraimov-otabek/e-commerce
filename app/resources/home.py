@@ -34,9 +34,7 @@ def root_path(
             "year": get_settings().year,
             "version": get_api_version(),
         }
-        return templates.TemplateResponse(
-            request=request, name="index.html", context=context
-        )
+        return templates.TemplateResponse(request=request, name="index.html", context=context)
 
     return {
         "info": (f"{get_settings().contact['name']}'s {get_settings().api_title}"),

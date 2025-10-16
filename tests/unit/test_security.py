@@ -48,14 +48,10 @@ class TestSecurityManager:
         _ = await UserManager.register(self.test_user, test_db)
         jwt_user = await UserManager.get_user_by_email(self.test_user["email"], test_db)
 
-        api_key_user = await UserManager.get_user_by_email(
-            self.test_user["email"], test_db
-        )
+        api_key_user = await UserManager.get_user_by_email(self.test_user["email"], test_db)
 
         mock_request = mocker.Mock()
-        result = await get_current_user(
-            mock_request, jwt_user=jwt_user, api_key_user=api_key_user
-        )
+        result = await get_current_user(mock_request, jwt_user=jwt_user, api_key_user=api_key_user)
         assert result == jwt_user
 
     async def test_get_current_user_no_auth(self, test_db, mocker) -> None:

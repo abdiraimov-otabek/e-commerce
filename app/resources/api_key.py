@@ -26,9 +26,7 @@ async def create_api_key(
     db: Annotated[AsyncSession, Depends(get_database)],
 ) -> ApiKeyCreateResponse:
     """Create a new API key for the authenticated user."""
-    api_key, raw_key = await ApiKeyManager.create_key(
-        user, request.name, request.scopes, db
-    )
+    api_key, raw_key = await ApiKeyManager.create_key(user, request.name, request.scopes, db)
     # Create response with all fields including the raw key
     response_data = {
         "id": api_key.id,

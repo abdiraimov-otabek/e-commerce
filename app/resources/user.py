@@ -50,9 +50,7 @@ async def get_users(
     response_model=MyUserResponse,
     name="get_my_user_data",
 )
-async def get_my_user(
-    request: Request, db: Annotated[AsyncSession, Depends(get_database)]
-) -> User:
+async def get_my_user(request: Request, db: Annotated[AsyncSession, Depends(get_database)]) -> User:
     """Get the current user's data only."""
     my_user: int = request.state.user.id
     return await UserManager.get_user_by_id(my_user, db)
@@ -63,9 +61,7 @@ async def get_my_user(
     dependencies=[Depends(get_current_user), Depends(is_admin)],
     status_code=status.HTTP_204_NO_CONTENT,
 )
-async def make_admin(
-    user_id: int, db: Annotated[AsyncSession, Depends(get_database)]
-) -> None:
+async def make_admin(user_id: int, db: Annotated[AsyncSession, Depends(get_database)]) -> None:
     """Make the User with this ID an Admin."""
     await UserManager.change_role(RoleType.admin, user_id, db)
 
@@ -145,9 +141,7 @@ async def edit_user(
     dependencies=[Depends(get_current_user), Depends(is_admin)],
     status_code=status.HTTP_204_NO_CONTENT,
 )
-async def delete_user(
-    user_id: int, db: Annotated[AsyncSession, Depends(get_database)]
-) -> None:
+async def delete_user(user_id: int, db: Annotated[AsyncSession, Depends(get_database)]) -> None:
     """Delete the specified User by user_id.
 
     Admin only.

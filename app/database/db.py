@@ -22,10 +22,7 @@ def get_database_url(*, use_test_db: bool = False) -> str:
         use_test_db: Whether to use the test database name
     """
     if os.getenv("GITHUB_ACTIONS"):
-        return (
-            "postgresql+asyncpg://postgres:postgres"
-            "@localhost:5432/fastapi-template-test"
-        )
+        return "postgresql+asyncpg://postgres:postgres@localhost:5432/fastapi-template-test"
 
     settings = get_settings()
     db_name = settings.test_db_name if use_test_db else settings.db_name

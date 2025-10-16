@@ -125,9 +125,7 @@ class TestCLI:
     # ------------------------------------------------------------------------ #
     #                          test 'list' subcommand                          #
     # ------------------------------------------------------------------------ #
-    def test_list_users(
-        self, runner: CliRunner, test_user: User, mocker, monkeypatch
-    ) -> None:
+    def test_list_users(self, runner: CliRunner, test_user: User, mocker, monkeypatch) -> None:
         """Test that the 'list' command works."""
         monkeypatch.setenv("COLUMNS", "120")
         mock_get_all_users = mocker.patch(
@@ -162,9 +160,7 @@ class TestCLI:
 
         assert "No Users found" in result.output
 
-    def test_list_user_multiple_users(
-        self, runner: CliRunner, mocker, monkeypatch
-    ) -> None:
+    def test_list_user_multiple_users(self, runner: CliRunner, mocker, monkeypatch) -> None:
         """Test that the 'list' command works when there are multiple users."""
         monkeypatch.setenv("COLUMNS", "120")
         fake = Faker()
@@ -223,9 +219,7 @@ class TestCLI:
                 ]
             )
 
-    def test_list_user_error(
-        self, runner: CliRunner, mocker, capsys, test_user
-    ) -> None:
+    def test_list_user_error(self, runner: CliRunner, mocker, capsys, test_user) -> None:
         """Test that the 'list' command works when there is an error."""
         mock_connection = mocker.patch(
             self.patch_async_session,
@@ -300,23 +294,17 @@ class TestCLI:
         assert mock_session.return_value.__aenter__.return_value.commit.called
 
         # Check that the 'verified' value in the returned user is True
-        verified_user = (
-            mock_session.return_value.__aenter__.return_value.get.return_value
-        )
+        verified_user = mock_session.return_value.__aenter__.return_value.get.return_value
         assert verified_user.verified is True
 
         assert f"User {test_user.id} verified" in result.output
 
-    def test_verify_sqlalchemy_error(
-        self, runner: CliRunner, mocker, test_user
-    ) -> None:
+    def test_verify_sqlalchemy_error(self, runner: CliRunner, mocker, test_user) -> None:
         """Test that the 'verify' command exits when the user is missing."""
         mock_session = mocker.patch(
             self.patch_async_session,
         )
-        mock_session.return_value.__aenter__.return_value.get.side_effect = (
-            SQLAlchemyError("Ooooops!!")
-        )
+        mock_session.return_value.__aenter__.return_value.get.side_effect = SQLAlchemyError("Ooooops!!")
 
         result = runner.invoke(app, ["user", "verify", str(test_user.id)])
         assert result.exit_code == 1
@@ -376,9 +364,7 @@ class TestCLI:
         mock_session = mocker.patch(
             self.patch_async_session,
         )
-        mock_session.return_value.__aenter__.return_value.get.side_effect = (
-            SQLAlchemyError("Ooooops!!")
-        )
+        mock_session.return_value.__aenter__.return_value.get.side_effect = SQLAlchemyError("Ooooops!!")
         result = runner.invoke(app, ["user", "ban", str(test_user.id)])
         assert result.exit_code == 1
 
@@ -409,9 +395,7 @@ class TestCLI:
     # ------------------------------------------------------------------------ #
     #                         test 'admin' subcommand                          #
     # ------------------------------------------------------------------------ #
-    def test_admin_user(
-        self, runner: CliRunner, mocker, monkeypatch, test_user
-    ) -> None:
+    def test_admin_user(self, runner: CliRunner, mocker, monkeypatch, test_user) -> None:
         """Test that the 'admin' command works."""
         mock_session = mocker.patch(
             self.patch_async_session,
@@ -434,9 +418,7 @@ class TestCLI:
 
         assert f"Admin status granted to User {test_user.id}" in result.output
 
-    def test_admin_remove(
-        self, runner: CliRunner, mocker, monkeypatch, test_admin
-    ) -> None:
+    def test_admin_remove(self, runner: CliRunner, mocker, monkeypatch, test_admin) -> None:
         """Test that the 'admin' command with --remove flag works."""
         mock_session = mocker.patch(
             self.patch_async_session,
@@ -464,9 +446,7 @@ class TestCLI:
         mock_session = mocker.patch(
             self.patch_async_session,
         )
-        mock_session.return_value.__aenter__.return_value.get.side_effect = (
-            SQLAlchemyError("Ooooops!!")
-        )
+        mock_session.return_value.__aenter__.return_value.get.side_effect = SQLAlchemyError("Ooooops!!")
         result = runner.invoke(app, ["user", "admin", str(test_user.id)])
         assert result.exit_code == 1
 
@@ -513,16 +493,12 @@ class TestCLI:
 
         assert f"User {test_user.id} DELETED" in result.output
 
-    def test_delete_sqlalchemy_error(
-        self, runner: CliRunner, mocker, test_user
-    ) -> None:
+    def test_delete_sqlalchemy_error(self, runner: CliRunner, mocker, test_user) -> None:
         """Test that the 'delete' command exits when there is an error."""
         mock_session = mocker.patch(
             self.patch_async_session,
         )
-        mock_session.return_value.__aenter__.return_value.get.side_effect = (
-            SQLAlchemyError("Ooooops!!")
-        )
+        mock_session.return_value.__aenter__.return_value.get.side_effect = SQLAlchemyError("Ooooops!!")
         result = runner.invoke(app, ["user", "delete", str(test_user.id)])
         assert result.exit_code == 1
 
@@ -553,9 +529,7 @@ class TestCLI:
     # ------------------------------------------------------------------------ #
     #                         test 'search' subcommand                         #
     # ------------------------------------------------------------------------ #
-    def test_search_users_basic(
-        self, runner: CliRunner, mocker, monkeypatch, test_user
-    ) -> None:
+    def test_search_users_basic(self, runner: CliRunner, mocker, monkeypatch, test_user) -> None:
         """Test that the basic search command works."""
         monkeypatch.setenv("COLUMNS", "120")
         mock_session = mocker.patch(
@@ -579,9 +553,7 @@ class TestCLI:
         assert mock_search.called
 
         # Verify search parameters
-        mock_search.assert_called_once_with(
-            "test@example.com", SearchField.ALL, exact_match=False
-        )
+        mock_search.assert_called_once_with("test@example.com", SearchField.ALL, exact_match=False)
 
         # Check output contains user details and search info
         assert all(
@@ -597,9 +569,7 @@ class TestCLI:
             ]
         )
 
-    def test_search_users_with_field(
-        self, runner: CliRunner, mocker, monkeypatch, test_user
-    ) -> None:
+    def test_search_users_with_field(self, runner: CliRunner, mocker, monkeypatch, test_user) -> None:
         """Test search with specific field parameter."""
         monkeypatch.setenv("COLUMNS", "120")
         mock_session = mocker.patch(
@@ -623,17 +593,13 @@ class TestCLI:
         assert mock_search.called
 
         # Verify search parameters
-        mock_search.assert_called_once_with(
-            "john", SearchField.FIRST_NAME, exact_match=False
-        )
+        mock_search.assert_called_once_with("john", SearchField.FIRST_NAME, exact_match=False)
 
         # Check output shows correct field
         assert "first_name" in result.output
         assert "partial match" in result.output
 
-    def test_search_users_exact_match(
-        self, runner: CliRunner, mocker, monkeypatch, test_user
-    ) -> None:
+    def test_search_users_exact_match(self, runner: CliRunner, mocker, monkeypatch, test_user) -> None:
         """Test search with exact matching enabled."""
         monkeypatch.setenv("COLUMNS", "120")
         mock_session = mocker.patch(
@@ -657,9 +623,7 @@ class TestCLI:
         assert mock_search.called
 
         # Verify search parameters
-        mock_search.assert_called_once_with(
-            "john@example.com", SearchField.ALL, exact_match=True
-        )
+        mock_search.assert_called_once_with("john@example.com", SearchField.ALL, exact_match=True)
 
         # Check output shows exact match
         assert "exact match" in result.output
@@ -689,9 +653,7 @@ class TestCLI:
         # Check output shows no users found message
         assert "No users found matching 'nonexistent'" in result.output
 
-    def test_search_users_invalid_field(
-        self, runner: CliRunner, mocker, monkeypatch, test_user
-    ) -> None:
+    def test_search_users_invalid_field(self, runner: CliRunner, mocker, monkeypatch, test_user) -> None:
         """Test that invalid field defaults to searching all fields."""
         monkeypatch.setenv("COLUMNS", "120")
         mock_session = mocker.patch(
@@ -709,9 +671,7 @@ class TestCLI:
         mock_execute = mock_session.return_value.__aenter__.return_value.execute
         mock_execute.return_value = mock_result
 
-        result = runner.invoke(
-            app, ["user", "search", "test", "--field", "invalid_field"]
-        )
+        result = runner.invoke(app, ["user", "search", "test", "--field", "invalid_field"])
         assert result.exit_code == 0
 
         assert mock_session.called

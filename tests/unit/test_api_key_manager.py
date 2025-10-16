@@ -114,16 +114,12 @@ class TestApiKeyManager:
         assert exc.value.status_code == status.HTTP_401_UNAUTHORIZED
         assert exc.value.detail == ApiKeyErrorMessages.INVALID_KEY
 
-    async def test_api_key_auth_inactive_key_no_auto_error(
-        self, test_db, mocker
-    ) -> None:
+    async def test_api_key_auth_inactive_key_no_auto_error(self, test_db, mocker) -> None:
         """Test inactive API key with auto_error disabled."""
         # Create a user and API key
         _ = await UserManager.register(self.test_user, test_db)
         user = await UserManager.get_user_by_email(self.test_user["email"], test_db)
-        api_key, raw_key = await ApiKeyManager.create_key(
-            user, "Test Key", None, test_db
-        )
+        api_key, raw_key = await ApiKeyManager.create_key(user, "Test Key", None, test_db)
 
         # Deactivate the key
         api_key.is_active = False
@@ -142,9 +138,7 @@ class TestApiKeyManager:
         # Create a user and API key
         _ = await UserManager.register(self.test_user, test_db)
         user = await UserManager.get_user_by_email(self.test_user["email"], test_db)
-        api_key, raw_key = await ApiKeyManager.create_key(
-            user, "Test Key", None, test_db
-        )
+        api_key, raw_key = await ApiKeyManager.create_key(user, "Test Key", None, test_db)
 
         # Deactivate the key
         api_key.is_active = False
@@ -166,9 +160,7 @@ class TestApiKeyManager:
         # Create a user and API key
         _ = await UserManager.register(self.test_user, test_db)
         user = await UserManager.get_user_by_email(self.test_user["email"], test_db)
-        api_key, raw_key = await ApiKeyManager.create_key(
-            user, "Test Key", None, test_db
-        )
+        api_key, raw_key = await ApiKeyManager.create_key(user, "Test Key", None, test_db)
 
         # Delete the API key first to avoid foreign key constraint
         await test_db.execute(delete(ApiKey).where(ApiKey.id == api_key.id))
@@ -187,16 +179,12 @@ class TestApiKeyManager:
         assert exc.value.status_code == status.HTTP_401_UNAUTHORIZED
         assert exc.value.detail == ApiKeyErrorMessages.INVALID_KEY
 
-    async def test_api_key_auth_user_not_found_no_auto_error(
-        self, test_db, mocker
-    ) -> None:
+    async def test_api_key_auth_user_not_found_no_auto_error(self, test_db, mocker) -> None:
         """Test API key auth when user is not found & auto_error disabled."""
         # Create a user and API key
         _ = await UserManager.register(self.test_user, test_db)
         user = await UserManager.get_user_by_email(self.test_user["email"], test_db)
-        api_key, raw_key = await ApiKeyManager.create_key(
-            user, "Test Key", None, test_db
-        )
+        api_key, raw_key = await ApiKeyManager.create_key(user, "Test Key", None, test_db)
 
         # Delete the API key first to avoid foreign key constraint
         await test_db.execute(delete(ApiKey).where(ApiKey.id == api_key.id))
@@ -212,16 +200,12 @@ class TestApiKeyManager:
         result = await auth(request=mock_req, db=test_db)
         assert result is None
 
-    async def test_api_key_auth_success_sets_request_state(
-        self, test_db, mocker
-    ) -> None:
+    async def test_api_key_auth_success_sets_request_state(self, test_db, mocker) -> None:
         """Test that successful API key auth sets request state."""
         # Create a user and API key
         _ = await UserManager.register(self.test_user, test_db)
         user = await UserManager.get_user_by_email(self.test_user["email"], test_db)
-        api_key, raw_key = await ApiKeyManager.create_key(
-            user, "Test Key", None, test_db
-        )
+        api_key, raw_key = await ApiKeyManager.create_key(user, "Test Key", None, test_db)
 
         # Test with valid key
         mock_req = mocker.patch("app.managers.auth.Request")
@@ -267,9 +251,7 @@ class TestApiKeyManager:
         assert exc.value.status_code == status.HTTP_401_UNAUTHORIZED
         assert exc.value.detail == ApiKeyErrorMessages.INVALID_KEY
 
-    async def test_api_key_auth_user_not_found_in_db_no_auto_error(
-        self, test_db, mocker
-    ) -> None:
+    async def test_api_key_auth_user_not_found_in_db_no_auto_error(self, test_db, mocker) -> None:
         """Test API key auth when user not in database & auto_error is False."""
         # Create a user and API key
         _ = await UserManager.register(self.test_user, test_db)
@@ -298,9 +280,7 @@ class TestApiKeyManager:
         result = ApiKeyManager._hash_key(test_key)
 
         # Calculate expected HMAC manually
-        expected = hmac.new(
-            test_secret.encode(), test_key.encode(), hashlib.sha256
-        ).hexdigest()
+        expected = hmac.new(test_secret.encode(), test_key.encode(), hashlib.sha256).hexdigest()
 
         assert result == expected
         assert len(result) == 64  # SHA256 hex digest length  # noqa: PLR2004

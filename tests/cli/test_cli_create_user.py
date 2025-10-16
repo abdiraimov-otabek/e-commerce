@@ -27,9 +27,7 @@ class TestCLI:
     patch_register_user = "app.commands.user.UserManager.register"
     patch_async_session = "app.commands.user.async_session"
 
-    def test_create_user_success(
-        self, runner: CliRunner, mocker, fake_user_data
-    ) -> None:
+    def test_create_user_success(self, runner: CliRunner, mocker, fake_user_data) -> None:
         """Test successful creation of a user."""
         mock_register = mocker.patch(self.patch_register_user, return_value=None)
 
@@ -52,9 +50,7 @@ class TestCLI:
         assert "added succesfully" in result.output
         assert mock_register.called
 
-    def test_create_admin_success(
-        self, runner: CliRunner, mocker, fake_user_data
-    ) -> None:
+    def test_create_admin_success(self, runner: CliRunner, mocker, fake_user_data) -> None:
         """Test successful creation of an admin user."""
         mock_register = mocker.patch(self.patch_register_user, return_value=None)
 
@@ -79,9 +75,7 @@ class TestCLI:
         assert "Admin" in result.output
         assert mock_register.called
 
-    def test_create_user_http_exception(
-        self, runner: CliRunner, mocker, fake_user_data
-    ) -> None:
+    def test_create_user_http_exception(self, runner: CliRunner, mocker, fake_user_data) -> None:
         """Test HTTPException during user creation."""
         mocker.patch(
             self.patch_register_user,
@@ -106,9 +100,7 @@ class TestCLI:
         assert result.exit_code == 1
         assert "ERROR adding User" in result.output
 
-    def test_create_user_sqlalchemy_error(
-        self, runner: CliRunner, mocker, fake_user_data
-    ) -> None:
+    def test_create_user_sqlalchemy_error(self, runner: CliRunner, mocker, fake_user_data) -> None:
         """Test SQLAlchemyError during user creation."""
         mocker.patch(
             self.patch_register_user,
@@ -133,9 +125,7 @@ class TestCLI:
         assert result.exit_code == 1
         assert "ERROR adding User" in result.output
 
-    def test_create_user_interactive(
-        self, runner: CliRunner, mocker, fake_user_data
-    ) -> None:
+    def test_create_user_interactive(self, runner: CliRunner, mocker, fake_user_data) -> None:
         """Test interactive creation of a user by simulating keyboard input."""
         user_input = (
             f"{fake_user_data['email']}\n{fake_user_data['first_name']}\n"
@@ -150,9 +140,7 @@ class TestCLI:
         assert "added succesfully" in result.output
         assert mock_register.called
 
-    def test_create_admin_interactive(
-        self, runner: CliRunner, mocker, fake_user_data
-    ) -> None:
+    def test_create_admin_interactive(self, runner: CliRunner, mocker, fake_user_data) -> None:
         """Test interactive creation of an admin user."""
         user_input = (
             f"{fake_user_data['email']}\n{fake_user_data['first_name']}\n"

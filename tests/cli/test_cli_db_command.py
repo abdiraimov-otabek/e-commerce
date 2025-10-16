@@ -237,14 +237,10 @@ class TestCLI:
 
         user_manager_mock = mocker.patch(
             "app.commands.db.UserManager.register",
-            side_effect=HTTPException(
-                status_code=400, detail=ErrorMessages.EMAIL_EXISTS
-            ),
+            side_effect=HTTPException(status_code=400, detail=ErrorMessages.EMAIL_EXISTS),
         )
 
-        result = asyncio.run(
-            _create_single_user(fake, session_mock, max_retries=2, is_admin=False)
-        )
+        result = asyncio.run(_create_single_user(fake, session_mock, max_retries=2, is_admin=False))
 
         # Verify the result and that the correct calls were made
         assert result is False

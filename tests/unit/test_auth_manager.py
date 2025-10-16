@@ -107,9 +107,7 @@ class TestAuthManager:
     async def test_refresh(self, test_db) -> None:
         """Test the refresh method returns a new token."""
         _, refresh = await UserManager.register(self.test_user, test_db)
-        new_token = await AuthManager.refresh(
-            TokenRefreshRequest(refresh=refresh), test_db
-        )
+        new_token = await AuthManager.refresh(TokenRefreshRequest(refresh=refresh), test_db)
 
         assert isinstance(new_token, str)
 
@@ -119,9 +117,7 @@ class TestAuthManager:
         await UserManager.register(self.test_user, test_db)
         new_token = None
         with pytest.raises(HTTPException) as exc_info:
-            new_token = await AuthManager.refresh(
-                TokenRefreshRequest(refresh="horrible_bad_token"), test_db
-            )
+            new_token = await AuthManager.refresh(TokenRefreshRequest(refresh="horrible_bad_token"), test_db)
         assert exc_info.value.status_code == status.HTTP_401_UNAUTHORIZED
         assert exc_info.value.detail == ResponseMessages.INVALID_TOKEN
         assert new_token is None
@@ -136,9 +132,7 @@ class TestAuthManager:
         )
 
         with pytest.raises(HTTPException) as exc_info:
-            await AuthManager.refresh(
-                TokenRefreshRequest(refresh=expired_refresh), test_db
-            )
+            await AuthManager.refresh(TokenRefreshRequest(refresh=expired_refresh), test_db)
         assert exc_info.value.status_code == status.HTTP_401_UNAUTHORIZED
         assert exc_info.value.detail == ResponseMessages.EXPIRED_TOKEN
 
@@ -163,9 +157,7 @@ class TestAuthManager:
         await UserManager.register(self.test_user, test_db)
         new_token = None
         with pytest.raises(HTTPException) as exc_info:
-            new_token = await AuthManager.refresh(
-                TokenRefreshRequest(refresh=""), test_db
-            )
+            new_token = await AuthManager.refresh(TokenRefreshRequest(refresh=""), test_db)
         assert exc_info.value.status_code == status.HTTP_401_UNAUTHORIZED
         assert exc_info.value.detail == ResponseMessages.INVALID_TOKEN
         assert new_token is None
@@ -176,9 +168,7 @@ class TestAuthManager:
         no_user_refresh = AuthManager.encode_refresh_token(User(id=999))
         new_token = None
         with pytest.raises(HTTPException) as exc_info:
-            new_token = await AuthManager.refresh(
-                TokenRefreshRequest(refresh=no_user_refresh), test_db
-            )
+            new_token = await AuthManager.refresh(TokenRefreshRequest(refresh=no_user_refresh), test_db)
         assert exc_info.value.status_code == status.HTTP_404_NOT_FOUND
         assert exc_info.value.detail == ResponseMessages.USER_NOT_FOUND
         assert new_token is None
@@ -191,9 +181,7 @@ class TestAuthManager:
         banned_user_refresh = AuthManager.encode_refresh_token(User(id=1))
         new_token = None
         with pytest.raises(HTTPException) as exc_info:
-            new_token = await AuthManager.refresh(
-                TokenRefreshRequest(refresh=banned_user_refresh), test_db
-            )
+            new_token = await AuthManager.refresh(TokenRefreshRequest(refresh=banned_user_refresh), test_db)
         assert exc_info.value.status_code == status.HTTP_401_UNAUTHORIZED
         assert exc_info.value.detail == ResponseMessages.INVALID_TOKEN
         assert new_token is None

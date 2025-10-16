@@ -225,32 +225,22 @@ class TestDatabase:
 
         # Test normal database URL
         url = db.get_database_url()
-        assert url == (
-            "postgresql+asyncpg://test_user:test_password" "@test_host:5432/test_db"
-        )
+        assert url == ("postgresql+asyncpg://test_user:test_password@test_host:5432/test_db")
 
         # Test test database URL
         url = db.get_database_url(use_test_db=True)
-        assert url == (
-            "postgresql+asyncpg://test_user:test_password"
-            "@test_host:5432/test_db_test"
-        )
+        assert url == ("postgresql+asyncpg://test_user:test_password@test_host:5432/test_db_test")
 
     def test_get_database_url_github_actions(self, mocker) -> None:
         """Test get_database_url() returns the correct URL in GitHub Actions."""
         mocker.patch.dict(os.environ, {"GITHUB_ACTIONS": "true"})
         url = db.get_database_url()
-        assert url == (
-            "postgresql+asyncpg://postgres:postgres"
-            "@localhost:5432/fastapi-template-test"
-        )
+        assert url == ("postgresql+asyncpg://postgres:postgres@localhost:5432/fastapi-template-test")
 
     def test_create_session_maker(self, mocker) -> None:
         """Test create_session_maker function returns a valid session maker."""
         mock_get_url = mocker.patch("app.database.db.get_database_url")
-        mock_get_url.return_value = (
-            "postgresql+asyncpg://test_user:test_password" "@test_host:5432/test_db"
-        )
+        mock_get_url.return_value = "postgresql+asyncpg://test_user:test_password@test_host:5432/test_db"
 
         # Test normal session maker
         session_maker = db.create_session_maker()
@@ -259,10 +249,7 @@ class TestDatabase:
         assert session_maker.kw["expire_on_commit"] is False
 
         # Test test session maker
-        mock_get_url.return_value = (
-            "postgresql+asyncpg://test_user:test_password"
-            "@test_host:5432/test_db_test"
-        )
+        mock_get_url.return_value = "postgresql+asyncpg://test_user:test_password@test_host:5432/test_db_test"
         session_maker = db.create_session_maker(use_test_db=True)
         assert session_maker is not None
         assert isinstance(session_maker, async_sessionmaker)

@@ -42,25 +42,19 @@ class TestUserRoutes:
     # ------------------------------------------------------------------------ #
     #                            test profile route                            #
     # ------------------------------------------------------------------------ #
-    async def test_get_my_profile(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_get_my_profile(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Test we can get the current users profile."""
         test_user = User(**self.get_test_user())
         test_db.add(test_user)
         await test_db.commit()
         token = AuthManager.encode_token(test_user)
 
-        response = await client.get(
-            "/users/me", headers={"Authorization": f"Bearer {token}"}
-        )
+        response = await client.get("/users/me", headers={"Authorization": f"Bearer {token}"})
 
         assert response.status_code == status.HTTP_200_OK
         assert len(response.json()) == 3  # noqa: PLR2004
 
-    async def test_get_my_profile_no_auth(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_get_my_profile_no_auth(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Ensure we get no profile if no auth token is provided."""
         test_db.add(User(**self.get_test_user()))
         await test_db.commit()
@@ -68,16 +62,12 @@ class TestUserRoutes:
         response = await client.get("/users/me")
 
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
-        assert response.json() == {
-            "detail": "Not authenticated. Use either JWT token or API key."
-        }
+        assert response.json() == {"detail": "Not authenticated. Use either JWT token or API key."}
 
     # ------------------------------------------------------------------------ #
     #                           test get users route                           #
     # ------------------------------------------------------------------------ #
-    async def test_admin_can_get_all_users(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_admin_can_get_all_users(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Ensure an admin user can get all users.
 
         This test will create 3 users, then create an admin user and ensure
@@ -92,16 +82,12 @@ class TestUserRoutes:
         await test_db.commit()
         token = AuthManager.encode_token(admin_user)
 
-        response = await client.get(
-            "/users/", headers={"Authorization": f"Bearer {token}"}
-        )
+        response = await client.get("/users/", headers={"Authorization": f"Bearer {token}"})
 
         assert response.status_code == status.HTTP_200_OK
         assert len(response.json()) == 4  # noqa: PLR2004
 
-    async def test_admin_can_get_one_user(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_admin_can_get_one_user(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Ensure an admin user can get one users."""
         for _ in range(3):
             test_user = User(**self.get_test_user())
@@ -112,16 +98,12 @@ class TestUserRoutes:
         await test_db.commit()
         token = AuthManager.encode_token(admin_user)
 
-        response = await client.get(
-            "/users/?user_id=3", headers={"Authorization": f"Bearer {token}"}
-        )
+        response = await client.get("/users/?user_id=3", headers={"Authorization": f"Bearer {token}"})
 
         assert response.status_code == status.HTTP_200_OK
         assert response.json()["id"] == 3  # noqa: PLR2004
 
-    async def test_user_cant_get_all_users(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_user_cant_get_all_users(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Test we can't get all users if not admin."""
         for _ in range(3):
             test_user = User(**self.get_test_user())
@@ -130,16 +112,12 @@ class TestUserRoutes:
 
         await test_db.commit()
 
-        response = await client.get(
-            "/users/", headers={"Authorization": f"Bearer {token}"}
-        )
+        response = await client.get("/users/", headers={"Authorization": f"Bearer {token}"})
 
         assert response.status_code == status.HTTP_403_FORBIDDEN
         assert response.json() == {"detail": "Forbidden"}
 
-    async def test_user_cant_get_single_user(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_user_cant_get_single_user(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Test we can't get all users if not admin."""
         for _ in range(3):
             test_user = User(**self.get_test_user())
@@ -148,9 +126,7 @@ class TestUserRoutes:
 
         await test_db.commit()
 
-        response = await client.get(
-            "/users/?user_id=2", headers={"Authorization": f"Bearer {token}"}
-        )
+        response = await client.get("/users/?user_id=2", headers={"Authorization": f"Bearer {token}"})
 
         assert response.status_code == status.HTTP_403_FORBIDDEN
         assert response.json() == {"detail": "Forbidden"}
@@ -158,9 +134,7 @@ class TestUserRoutes:
     # ------------------------------------------------------------------------ #
     #                           test make_admin route                          #
     # ------------------------------------------------------------------------ #
-    async def test_make_admin_as_admin(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_make_admin_as_admin(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Test we can upgrade an existing user to admin."""
         normal_user = self.get_test_user()
         admin_user = self.get_test_user(admin=True)
@@ -184,9 +158,7 @@ class TestUserRoutes:
         assert new_admin.status_code == status.HTTP_200_OK
         assert new_admin.json()["role"] == RoleType.admin.value
 
-    async def test_cant_make_admin_as_user(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_cant_make_admin_as_user(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Test we can upgrade an existing user to admin."""
         normal_user = self.get_test_user()
         normal_user_2 = self.get_test_user()
@@ -213,9 +185,7 @@ class TestUserRoutes:
     # ------------------------------------------------------------------------ #
     #                            test ban user route                           #
     # ------------------------------------------------------------------------ #
-    async def test_admin_can_ban_user(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_admin_can_ban_user(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Ensure an admin can ban a user."""
         normal_user = self.get_test_user()
         admin_user = self.get_test_user(admin=True)
@@ -240,9 +210,7 @@ class TestUserRoutes:
         assert banned_user.status_code == status.HTTP_200_OK
         assert banned_user.json()["banned"] is True
 
-    async def test_admin_cant_ban_self(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_admin_cant_ban_self(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Ensure an admin can ban a user."""
         admin_user = self.get_test_user(admin=True)
         test_db.add(User(**admin_user))
@@ -264,9 +232,7 @@ class TestUserRoutes:
         assert check_not_banned.status_code == status.HTTP_200_OK
         assert check_not_banned.json()["banned"] is False
 
-    async def test_user_cant_ban(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_user_cant_ban(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Ensure a non-admin cant ban another user."""
         test_db.add(User(**self.get_test_user()))
         test_db.add(User(**self.get_test_user()))
@@ -290,9 +256,7 @@ class TestUserRoutes:
         assert banned_user.status_code == status.HTTP_200_OK
         assert banned_user.json()["banned"] is False
 
-    async def test_admin_cant_ban_missing_user(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_admin_cant_ban_missing_user(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Ensure an admin cant unban user that does not exist."""
         test_db.add(User(**self.get_test_user(admin=True)))
         token = AuthManager.encode_token(User(id=1))
@@ -310,9 +274,7 @@ class TestUserRoutes:
     # ------------------------------------------------------------------------ #
     #                           test unban user route                          #
     # ------------------------------------------------------------------------ #
-    async def test_admin_can_unban_user(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_admin_can_unban_user(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Ensure an admin can ban a user."""
         normal_user = {**self.get_test_user(), "banned": True}
         admin_user = self.get_test_user(admin=True)
@@ -336,9 +298,7 @@ class TestUserRoutes:
         assert banned_user.status_code == status.HTTP_200_OK
         assert banned_user.json()["banned"] is False
 
-    async def test_admin_cant_uban_self(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_admin_cant_uban_self(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Ensure an admin cant unban self."""
         admin_user = {**self.get_test_user(admin=True), "banned": True}
         test_db.add(User(**admin_user))
@@ -353,9 +313,7 @@ class TestUserRoutes:
 
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
-    async def test_admin_cant_unban_missing_user(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_admin_cant_unban_missing_user(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Ensure an admin cant unban user that does not exist."""
         test_db.add(User(**self.get_test_user(admin=True)))
         token = AuthManager.encode_token(User(id=1))
@@ -370,9 +328,7 @@ class TestUserRoutes:
         assert response.status_code == status.HTTP_404_NOT_FOUND
         assert response.json() == {"detail": ErrorMessages.USER_INVALID}
 
-    async def test_user_cant_unban(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_user_cant_unban(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Ensure a non-admin cant unban another user."""
         test_db.add(User(**self.get_test_user()))
         test_db.add(User(**{**self.get_test_user(), "banned": True}))
@@ -390,9 +346,7 @@ class TestUserRoutes:
     # ------------------------------------------------------------------------ #
     #                          test delete user route                          #
     # ------------------------------------------------------------------------ #
-    async def test_admin_can_delete_user(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_admin_can_delete_user(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Test that an admin can delete a user."""
         test_db.add(User(**self.get_test_user()))
         test_db.add(User(**self.get_test_user(admin=True)))
@@ -412,9 +366,7 @@ class TestUserRoutes:
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
-    async def test_non_admin_cant_delete_user(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_non_admin_cant_delete_user(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Test that an ordinary user cant delete another user."""
         test_db.add(User(**self.get_test_user()))
         test_db.add(User(**self.get_test_user()))
@@ -437,9 +389,7 @@ class TestUserRoutes:
         assert response.status_code == status.HTTP_403_FORBIDDEN
         assert not_deleted_user.status_code == status.HTTP_200_OK
 
-    async def test_delete_missing_user(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_delete_missing_user(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Test deleting a non-existing user."""
         test_db.add(User(**self.get_test_user(admin=True)))
         token = AuthManager.encode_token(User(id=1))
@@ -457,9 +407,7 @@ class TestUserRoutes:
     # ------------------------------------------------------------------------ #
     #                           test search route                              #
     # ------------------------------------------------------------------------ #
-    async def test_admin_can_search_users(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_admin_can_search_users(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Test that an admin can search for users."""
         # Create test users
         test_users = [
@@ -500,9 +448,7 @@ class TestUserRoutes:
         assert "test1@example.com" in emails
         assert "test2@example.com" in emails
 
-    async def test_non_admin_cannot_search_users(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_non_admin_cannot_search_users(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Test that a non-admin user cannot search users."""
         # Create regular user
         test_db.add(User(**self.get_test_user()))
@@ -517,9 +463,7 @@ class TestUserRoutes:
 
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
-    async def test_search_users_by_name(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_search_users_by_name(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Test searching users by first and last name."""
         # Create test users
         test_users = [
@@ -562,9 +506,7 @@ class TestUserRoutes:
         assert data["total"] == 2  # noqa: PLR2004
         assert all(item["last_name"] == "Doe" for item in data["items"])
 
-    async def test_search_users_invalid_field(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_search_users_invalid_field(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Test that invalid search field defaults to ALL."""
         # Create test user with a unique searchable term
         test_user = {
@@ -591,9 +533,7 @@ class TestUserRoutes:
         assert data["total"] == 1
         assert data["items"][0]["email"] == "unique123@example.com"
 
-    async def test_search_users_no_results(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_search_users_no_results(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Test search with no matching results."""
         # Create test user
         test_db.add(User(**self.get_test_user()))
@@ -614,9 +554,7 @@ class TestUserRoutes:
         assert data["total"] == 0
         assert len(data["items"]) == 0
 
-    async def test_search_users_empty_term(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_search_users_empty_term(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Test search with empty search term."""
         # Create admin user
         admin_user = User(**self.get_test_user(admin=True))
@@ -636,9 +574,7 @@ class TestUserRoutes:
     # ------------------------------------------------------------------------ #
     #                        test change password route                        #
     # ------------------------------------------------------------------------ #
-    async def test_user_can_change_own_password(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_user_can_change_own_password(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Ensure a user can change their own password."""
         user = self.get_test_user()
         test_db.add(User(**user))
@@ -660,9 +596,7 @@ class TestUserRoutes:
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert updated_user.status_code == status.HTTP_200_OK
 
-    async def test_user_cant_change_others_password(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_user_cant_change_others_password(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Ensure a user cant change other user password."""
         user2 = self.get_test_user()
 
@@ -686,9 +620,7 @@ class TestUserRoutes:
         assert response.status_code == status.HTTP_403_FORBIDDEN
         assert test_password.status_code == status.HTTP_200_OK
 
-    async def test_admin_can_change_others_password(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_admin_can_change_others_password(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Ensure an admin user can change any user password."""
         normal_user = self.get_test_user()
         admin_user = self.get_test_user(admin=True)
@@ -715,9 +647,7 @@ class TestUserRoutes:
     # ------------------------------------------------------------------------ #
     #                      test editing user details route                     #
     # ------------------------------------------------------------------------ #
-    async def test_user_can_change_own_details(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_user_can_change_own_details(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Ensure a user can change their own details."""
         normal_user = self.get_test_user()
         test_db.add(User(**normal_user))
@@ -743,9 +673,7 @@ class TestUserRoutes:
             "last_name": "new_surname",
         }
 
-    async def test_user_cant_change_others_details(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_user_cant_change_others_details(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Ensure a user cant change other user password."""
         test_db.add(User(**self.get_test_user()))
         test_db.add(User(**self.get_test_user()))
@@ -766,9 +694,7 @@ class TestUserRoutes:
 
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
-    async def test_admin_can_change_others_details(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_admin_can_change_others_details(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Ensure an admin user can change any user password."""
         test_db.add(User(**self.get_test_user()))
         test_db.add(User(**self.get_test_user(admin=True)))

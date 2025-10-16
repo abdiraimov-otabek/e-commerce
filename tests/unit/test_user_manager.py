@@ -114,9 +114,7 @@ class TestUserManager:  # pylint: disable=too-many-public-methods
         assert isinstance(token, str)
         assert isinstance(refresh, str)
 
-    async def test_register_user_verified_when_no_background_tasks_specified(
-        self, test_db
-    ) -> None:
+    async def test_register_user_verified_when_no_background_tasks_specified(self, test_db) -> None:
         """Test user is automatically verified when no 'background_tasks'."""
         await UserManager.register(self.test_user, test_db)
         user = await test_db.get(User, 1)
@@ -129,9 +127,7 @@ class TestUserManager:  # pylint: disable=too-many-public-methods
     ) -> None:
         """Test user is not verified when 'background_tasks' IS provided."""
         background_tasks = BackgroundTasks()
-        await UserManager.register(
-            self.test_user, test_db, background_tasks=background_tasks
-        )
+        await UserManager.register(self.test_user, test_db, background_tasks=background_tasks)
         user = await test_db.get(User, 1)
 
         assert user.verified is False
@@ -169,9 +165,7 @@ class TestUserManager:  # pylint: disable=too-many-public-methods
         'background_tasks' parameter.
         """
         background_tasks = BackgroundTasks()
-        await UserManager.register(
-            self.test_user, test_db, background_tasks=background_tasks
-        )
+        await UserManager.register(self.test_user, test_db, background_tasks=background_tasks)
         with pytest.raises(HTTPException, match=ErrorMessages.NOT_VERIFIED):
             await UserManager.login(self.test_user, test_db)
 
@@ -203,9 +197,7 @@ class TestUserManager:  # pylint: disable=too-many-public-methods
         edited_user = self.test_user.copy()
         edited_user["first_name"] = "Edited"
 
-        updated_user = await UserManager.update_user(
-            1, UserEditRequest(**edited_user), test_db
-        )
+        updated_user = await UserManager.update_user(1, UserEditRequest(**edited_user), test_db)
         assert updated_user is not None
         assert updated_user.first_name == "Edited"
 
@@ -231,9 +223,7 @@ class TestUserManager:  # pylint: disable=too-many-public-methods
         assert exc_info.value.status_code == status.HTTP_404_NOT_FOUND
         assert exc_info.value.detail == ErrorMessages.USER_INVALID
 
-    async def test_update_user_with_invalid_password_format(
-        self, test_db, mocker
-    ) -> None:
+    async def test_update_user_with_invalid_password_format(self, test_db, mocker) -> None:
         """Test updating a user with an invalid password format raises error."""
         # First create a user
         await UserManager.register(self.test_user, test_db)
@@ -312,9 +302,7 @@ class TestUserManager:  # pylint: disable=too-many-public-methods
         if state:
             await UserManager.set_ban_status(1, 666, test_db, banned=state)
 
-        with pytest.raises(
-            HTTPException, match=ErrorMessages.ALREADY_BANNED_OR_UNBANNED
-        ):
+        with pytest.raises(HTTPException, match=ErrorMessages.ALREADY_BANNED_OR_UNBANNED):
             await UserManager.set_ban_status(1, 666, test_db, banned=state)
 
     async def test_cant_ban_self(self, test_db) -> None:
@@ -351,9 +339,7 @@ class TestUserManager:  # pylint: disable=too-many-public-methods
         """Ensure we can get a user by their email."""
         await UserManager.register(self.test_user, test_db)
 
-        user_data = await UserManager.get_user_by_email(
-            self.test_user["email"], test_db
-        )
+        user_data = await UserManager.get_user_by_email(self.test_user["email"], test_db)
 
         assert user_data is not None
         assert user_data.email == self.test_user["email"]
@@ -458,9 +444,7 @@ class TestUserManager:  # pylint: disable=too-many-public-methods
 
         # Mock verify_password to raise ValueError
         with pytest.raises(HTTPException) as exc_info:
-            await UserManager.login(
-                {"email": self.test_user["email"], "password": ""}, test_db
-            )
+            await UserManager.login({"email": self.test_user["email"], "password": ""}, test_db)
 
         assert exc_info.value.status_code == status.HTTP_400_BAD_REQUEST
         assert exc_info.value.detail == ErrorMessages.PASSWORD_INVALID
@@ -495,17 +479,13 @@ class TestUserManager:  # pylint: disable=too-many-public-methods
         await UserManager.register(user2, test_db)
 
         # Test exact match on email
-        query = await UserManager.search_users(
-            "john.doe@example.com", SearchField.ALL, exact_match=True
-        )
+        query = await UserManager.search_users("john.doe@example.com", SearchField.ALL, exact_match=True)
         result = (await test_db.execute(query)).scalars().all()
         assert len(result) == 1
         assert result[0].email == "john.doe@example.com"
 
         # Test exact match on first name
-        query = await UserManager.search_users(
-            "John", SearchField.ALL, exact_match=True
-        )
+        query = await UserManager.search_users("John", SearchField.ALL, exact_match=True)
         result = (await test_db.execute(query)).scalars().all()
         assert len(result) == 1
         assert result[0].first_name == "John"
@@ -521,17 +501,13 @@ class TestUserManager:  # pylint: disable=too-many-public-methods
         await UserManager.register(user2, test_db)
 
         # Test partial match
-        query = await UserManager.search_users(
-            "john", SearchField.ALL, exact_match=False
-        )
+        query = await UserManager.search_users("john", SearchField.ALL, exact_match=False)
         result = (await test_db.execute(query)).scalars().all()
         assert len(result) == 1
         assert result[0].email == "john.doe@example.com"
 
         # Test partial match in email
-        query = await UserManager.search_users(
-            "example", SearchField.ALL, exact_match=False
-        )
+        query = await UserManager.search_users("example", SearchField.ALL, exact_match=False)
         result = (await test_db.execute(query)).scalars().all()
         assert len(result) == 1
         assert result[0].email == "john.doe@example.com"
@@ -547,25 +523,19 @@ class TestUserManager:  # pylint: disable=too-many-public-methods
         await UserManager.register(user2, test_db)
 
         # Test exact match on email field
-        query = await UserManager.search_users(
-            "john.doe@example.com", SearchField.EMAIL, exact_match=True
-        )
+        query = await UserManager.search_users("john.doe@example.com", SearchField.EMAIL, exact_match=True)
         result = (await test_db.execute(query)).scalars().all()
         assert len(result) == 1
         assert result[0].email == "john.doe@example.com"
 
         # Test exact match on first name field
-        query = await UserManager.search_users(
-            "John", SearchField.FIRST_NAME, exact_match=True
-        )
+        query = await UserManager.search_users("John", SearchField.FIRST_NAME, exact_match=True)
         result = (await test_db.execute(query)).scalars().all()
         assert len(result) == 1
         assert result[0].first_name == "John"
 
         # Test exact match on last name field
-        query = await UserManager.search_users(
-            "Doe", SearchField.LAST_NAME, exact_match=True
-        )
+        query = await UserManager.search_users("Doe", SearchField.LAST_NAME, exact_match=True)
         result = (await test_db.execute(query)).scalars().all()
         assert len(result) == 1
         assert result[0].last_name == "Doe"
@@ -581,17 +551,13 @@ class TestUserManager:  # pylint: disable=too-many-public-methods
         await UserManager.register(user2, test_db)
 
         # Test partial match on email field
-        query = await UserManager.search_users(
-            "example", SearchField.EMAIL, exact_match=False
-        )
+        query = await UserManager.search_users("example", SearchField.EMAIL, exact_match=False)
         result = (await test_db.execute(query)).scalars().all()
         assert len(result) == 1
         assert result[0].email == "john.doe@example.com"
 
         # Test partial match on first name field
-        query = await UserManager.search_users(
-            "Jo", SearchField.FIRST_NAME, exact_match=False
-        )
+        query = await UserManager.search_users("Jo", SearchField.FIRST_NAME, exact_match=False)
         result = (await test_db.execute(query)).scalars().all()
         assert len(result) == 1
         assert result[0].first_name == "John"
@@ -607,16 +573,12 @@ class TestUserManager:  # pylint: disable=too-many-public-methods
         await UserManager.register(user2, test_db)
 
         # Test no match in all fields
-        query = await UserManager.search_users(
-            "nonexistent", SearchField.ALL, exact_match=False
-        )
+        query = await UserManager.search_users("nonexistent", SearchField.ALL, exact_match=False)
         result = (await test_db.execute(query)).scalars().all()
         assert len(result) == 0
 
         # Test no match in specific field
-        query = await UserManager.search_users(
-            "nonexistent", SearchField.EMAIL, exact_match=True
-        )
+        query = await UserManager.search_users("nonexistent", SearchField.EMAIL, exact_match=True)
         result = (await test_db.execute(query)).scalars().all()
         assert len(result) == 0
 
@@ -626,17 +588,13 @@ class TestUserManager:  # pylint: disable=too-many-public-methods
         await UserManager.register(self.test_user, test_db)
 
         # Test case-insensitive search
-        query = await UserManager.search_users(
-            "TEST", SearchField.FIRST_NAME, exact_match=False
-        )
+        query = await UserManager.search_users("TEST", SearchField.FIRST_NAME, exact_match=False)
         result = (await test_db.execute(query)).scalars().all()
         assert len(result) == 1
         assert result[0].first_name == "Test"
 
         # Test with mixed case
-        query = await UserManager.search_users(
-            "tEsT", SearchField.FIRST_NAME, exact_match=False
-        )
+        query = await UserManager.search_users("tEsT", SearchField.FIRST_NAME, exact_match=False)
         result = (await test_db.execute(query)).scalars().all()
         assert len(result) == 1
         assert result[0].first_name == "Test"

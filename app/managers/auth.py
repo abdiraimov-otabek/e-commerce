@@ -43,16 +43,12 @@ class AuthManager:
             payload = {
                 "sub": user.id,
                 "exp": datetime.datetime.now(tz=datetime.timezone.utc)
-                + datetime.timedelta(
-                    minutes=get_settings().access_token_expire_minutes
-                ),
+                + datetime.timedelta(minutes=get_settings().access_token_expire_minutes),
             }
             return jwt.encode(payload, get_settings().secret_key, algorithm="HS256")
         except (jwt.PyJWTError, AttributeError) as exc:
             # log the exception
-            raise HTTPException(
-                status.HTTP_401_UNAUTHORIZED, ResponseMessages.CANT_GENERATE_JWT
-            ) from exc
+            raise HTTPException(status.HTTP_401_UNAUTHORIZED, ResponseMessages.CANT_GENERATE_JWT) from exc
 
     @staticmethod
     def encode_refresh_token(user: User) -> str:
@@ -60,8 +56,7 @@ class AuthManager:
         try:
             payload = {
                 "sub": user.id,
-                "exp": datetime.datetime.now(tz=datetime.timezone.utc)
-                + datetime.timedelta(minutes=60 * 24 * 30),
+                "exp": datetime.datetime.now(tz=datetime.timezone.utc) + datetime.timedelta(minutes=60 * 24 * 30),
                 "typ": "refresh",
             }
             return jwt.encode(payload, get_settings().secret_key, algorithm="HS256")
@@ -78,8 +73,7 @@ class AuthManager:
         try:
             payload = {
                 "sub": user.id,
-                "exp": datetime.datetime.now(tz=datetime.timezone.utc)
-                + datetime.timedelta(minutes=10),
+                "exp": datetime.datetime.now(tz=datetime.timezone.utc) + datetime.timedelta(minutes=10),
                 "typ": "verify",
             }
             return jwt.encode(payload, get_settings().secret_key, algorithm="HS256")
@@ -102,32 +96,22 @@ class AuthManager:
             )
 
             if payload["typ"] != "refresh":
-                raise HTTPException(
-                    status.HTTP_401_UNAUTHORIZED, ResponseMessages.INVALID_TOKEN
-                )
+                raise HTTPException(status.HTTP_401_UNAUTHORIZED, ResponseMessages.INVALID_TOKEN)
 
             user_data = await get_user_by_id_(payload["sub"], session)
 
             if not user_data:
-                raise HTTPException(
-                    status.HTTP_404_NOT_FOUND, ResponseMessages.USER_NOT_FOUND
-                )
+                raise HTTPException(status.HTTP_404_NOT_FOUND, ResponseMessages.USER_NOT_FOUND)
 
             # block a banned user
             if bool(user_data.banned):
-                raise HTTPException(
-                    status.HTTP_401_UNAUTHORIZED, ResponseMessages.INVALID_TOKEN
-                )
+                raise HTTPException(status.HTTP_401_UNAUTHORIZED, ResponseMessages.INVALID_TOKEN)
             new_token = AuthManager.encode_token(user_data)
 
         except jwt.ExpiredSignatureError as exc:
-            raise HTTPException(
-                status.HTTP_401_UNAUTHORIZED, ResponseMessages.EXPIRED_TOKEN
-            ) from exc
+            raise HTTPException(status.HTTP_401_UNAUTHORIZED, ResponseMessages.EXPIRED_TOKEN) from exc
         except jwt.InvalidTokenError as exc:
-            raise HTTPException(
-                status.HTTP_401_UNAUTHORIZED, ResponseMessages.INVALID_TOKEN
-            ) from exc
+            raise HTTPException(status.HTTP_401_UNAUTHORIZED, ResponseMessages.INVALID_TOKEN) from exc
         else:
             return new_token
 
@@ -145,25 +129,17 @@ class AuthManager:
             user_data = await session.get(User, payload["sub"])
 
             if not user_data:
-                raise HTTPException(
-                    status.HTTP_404_NOT_FOUND, ResponseMessages.USER_NOT_FOUND
-                )
+                raise HTTPException(status.HTTP_404_NOT_FOUND, ResponseMessages.USER_NOT_FOUND)
 
             if payload["typ"] != "verify":
-                raise HTTPException(
-                    status.HTTP_401_UNAUTHORIZED, ResponseMessages.INVALID_TOKEN
-                )
+                raise HTTPException(status.HTTP_401_UNAUTHORIZED, ResponseMessages.INVALID_TOKEN)
 
             # block a banned user
             if bool(user_data.banned):
-                raise HTTPException(
-                    status.HTTP_401_UNAUTHORIZED, ResponseMessages.INVALID_TOKEN
-                )
+                raise HTTPException(status.HTTP_401_UNAUTHORIZED, ResponseMessages.INVALID_TOKEN)
 
             if bool(user_data.verified):
-                raise HTTPException(
-                    status.HTTP_401_UNAUTHORIZED, ResponseMessages.INVALID_TOKEN
-                )
+                raise HTTPException(status.HTTP_401_UNAUTHORIZED, ResponseMessages.INVALID_TOKEN)
 
             await session.execute(
                 update(User)
@@ -174,18 +150,12 @@ class AuthManager:
             )
             await session.commit()
 
-            raise HTTPException(
-                status.HTTP_200_OK, ResponseMessages.VERIFICATION_SUCCESS
-            )
+            raise HTTPException(status.HTTP_200_OK, ResponseMessages.VERIFICATION_SUCCESS)
 
         except jwt.ExpiredSignatureError as exc:
-            raise HTTPException(
-                status.HTTP_401_UNAUTHORIZED, ResponseMessages.EXPIRED_TOKEN
-            ) from exc
+            raise HTTPException(status.HTTP_401_UNAUTHORIZED, ResponseMessages.EXPIRED_TOKEN) from exc
         except jwt.InvalidTokenError as exc:
-            raise HTTPException(
-                status.HTTP_401_UNAUTHORIZED, ResponseMessages.INVALID_TOKEN
-            ) from exc
+            raise HTTPException(status.HTTP_401_UNAUTHORIZED, ResponseMessages.INVALID_TOKEN) from exc
 
     @staticmethod
     async def resend_verify_code(
@@ -195,15 +165,11 @@ class AuthManager:
         user_data = await get_user_by_id_(user, session)
 
         if not user_data:
-            raise HTTPException(
-                status.HTTP_404_NOT_FOUND, ResponseMessages.USER_NOT_FOUND
-            )
+            raise HTTPException(status.HTTP_404_NOT_FOUND, ResponseMessages.USER_NOT_FOUND)
 
         # block a banned user
         if bool(user_data.banned):
-            raise HTTPException(
-                status.HTTP_401_UNAUTHORIZED, ResponseMessages.INVALID_TOKEN
-            )
+            raise HTTPException(status.HTTP_401_UNAUTHORIZED, ResponseMessages.INVALID_TOKEN)
 
         if bool(user_data.verified):
             raise HTTPException(
@@ -297,9 +263,7 @@ def can_edit_user(request: Request) -> None:
 
     True if they own the resource or are Admin
     """
-    if request.state.user.role != RoleType.admin and request.state.user.id != int(
-        request.path_params["user_id"]
-    ):
+    if request.state.user.role != RoleType.admin and request.state.user.id != int(request.path_params["user_id"]):
         raise HTTPException(status.HTTP_403_FORBIDDEN, "Forbidden")
 
 

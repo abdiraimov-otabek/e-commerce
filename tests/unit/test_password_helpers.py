@@ -82,6 +82,4 @@ class TestPasswordHelpers:
         password = "  test  12345  !"
         hashed = hash_password(password)
         assert verify_password(password, hashed)
-        assert not verify_password(
-            password.strip(), hashed
-        )  # Should fail if whitespace is stripped
+        assert not verify_password(password.strip(), hashed)  # Should fail if whitespace is stripped

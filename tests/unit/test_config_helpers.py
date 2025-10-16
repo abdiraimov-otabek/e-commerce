@@ -57,8 +57,7 @@ class TestConfigHelpers:
 
         assert len(log_messages) == 1
         assert any(
-            record.levelname == "ERROR"
-            and "Cannot read the pyproject.toml file" in record.message
+            record.levelname == "ERROR" and "Cannot read the pyproject.toml file" in record.message
             for record in caplog.records
         ), "Expected error log not found"
 
@@ -204,9 +203,7 @@ class TestConfigHelpers:
         with pytest.raises(SystemExit, match="2"):
             get_api_details()
 
-        logger_messages = [
-            (record.levelname, record.message) for record in caplog.records
-        ]
+        logger_messages = [(record.levelname, record.message) for record in caplog.records]
         assert len(logger_messages) == 1
         assert (
             "ERROR",
@@ -224,8 +221,7 @@ class TestConfigHelpers:
 
         assert len(caplog.records) == 1
         assert any(
-            record.levelname == "ERROR"
-            and "Cannot read the pyproject.toml file" in record.message
+            record.levelname == "ERROR" and "Cannot read the pyproject.toml file" in record.message
             for record in caplog.records
         )
 

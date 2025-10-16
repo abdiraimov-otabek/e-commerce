@@ -85,9 +85,7 @@ async def generate_refresh_token(
 
 
 @router.get("/verify/", status_code=status.HTTP_200_OK)
-async def verify(
-    session: Annotated[AsyncSession, Depends(get_database)], code: str = ""
-) -> None:
+async def verify(session: Annotated[AsyncSession, Depends(get_database)], code: str = "") -> None:
     """Verify a new user.
 
     The code is sent to  new user by email, which must then be validated here.

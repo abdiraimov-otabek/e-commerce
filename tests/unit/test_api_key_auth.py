@@ -67,14 +67,10 @@ class TestApiKeyAuth:
         # Create a user and API key
         _ = await UserManager.register(self.test_user, test_db)
         user = await UserManager.get_user_by_email(self.test_user["email"], test_db)
-        api_key, raw_key = await ApiKeyManager.create_key(
-            user, "Test Key", None, test_db
-        )
+        api_key, raw_key = await ApiKeyManager.create_key(user, "Test Key", None, test_db)
 
         # Deactivate the key
-        await update_api_key_(
-            key_id=api_key.id, update_data={"is_active": False}, session=test_db
-        )
+        await update_api_key_(key_id=api_key.id, update_data={"is_active": False}, session=test_db)
 
         # Test the API key
         mock_req = mocker.patch(self.mock_request_path)

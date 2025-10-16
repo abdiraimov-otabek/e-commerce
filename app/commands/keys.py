@@ -29,9 +29,7 @@ def update_env_file(key: str, value: str) -> None:
         set_key(env_path, key, value)
         rprint(f"[green]Successfully updated {key} in .env file")
     else:
-        rprint(
-            f"Add/modify the [green]{key}[/green] in the .env file to use " "this key."
-        )
+        rprint(f"Add/modify the [green]{key}[/green] in the .env file to use this key.")
 
 
 @app.callback(invoke_without_command=True)

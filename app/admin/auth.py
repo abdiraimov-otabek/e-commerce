@@ -60,12 +60,7 @@ class AdminAuth(AuthenticationBackend):
         form = await request.form()
         email = form.get("username")
         password = form.get("password")
-        if (
-            not email
-            or not password
-            or not isinstance(email, str)
-            or not isinstance(password, str)
-        ):
+        if not email or not password or not isinstance(email, str) or not isinstance(password, str):
             return False
 
         async with async_session() as db:
@@ -95,10 +90,7 @@ class AdminAuth(AuthenticationBackend):
             bool: True if user is valid admin and not banned, False otherwise
         """
         return not (
-            not user
-            or not verify_password(password, user.password)
-            or user.role != RoleType.admin
-            or user.banned
+            not user or not verify_password(password, user.password) or user.role != RoleType.admin or user.banned
         )
 
     async def logout(self, request: Request) -> bool:

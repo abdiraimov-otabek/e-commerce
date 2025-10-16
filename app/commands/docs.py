@@ -15,9 +15,7 @@ app = typer.Typer(no_args_is_help=True)
 @app.command()
 def openapi(
     prefix: str = typer.Option("", help="Prefix for the OpenAPI schema"),
-    filename: str = typer.Option(
-        "openapi.json", help="Filename for the OpenAPI schema"
-    ),
+    filename: str = typer.Option("openapi.json", help="Filename for the OpenAPI schema"),
 ) -> None:
     """Generate an OpenAPI schema from the current routes.
 

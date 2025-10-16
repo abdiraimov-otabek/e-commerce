@@ -39,10 +39,7 @@ def init() -> None:
         "author": "Grant Ramsay (seapagan)",
         "website": "https://www.gnramsay.com",
         "email": "seapagan@gmail.com",
-        "this_year": datetime.datetime.now(tz=datetime.timezone.utc)
-        .date()
-        .today()
-        .year,
+        "this_year": datetime.datetime.now(tz=datetime.timezone.utc).date().today().year,
     }
 
     out = Template(TEMPLATE).render(data)
@@ -89,8 +86,7 @@ def choose_license() -> LicenceType:
 
     while choice.strip().lower() not in [lic.lower() for lic in license_list]:
         choice = click.prompt(
-            f"\nChoose a license from the following options:\n"
-            f"{license_strings}\nYour Choice of License?",
+            f"\nChoose a license from the following options:\n{license_strings}\nYour Choice of License?",
             type=str,
             default=custom_metadata.license_info["name"],
         )

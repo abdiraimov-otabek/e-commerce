@@ -40,9 +40,7 @@ class TestApiKeyRoutes:
         }
 
     @pytest.mark.asyncio
-    async def test_create_api_key(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_create_api_key(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Test creating a new API key."""
         # Create and login a user
         test_user = User(**self.get_test_user())
@@ -67,9 +65,7 @@ class TestApiKeyRoutes:
         assert isinstance(UUID(data["id"]), UUID)
 
     @pytest.mark.asyncio
-    async def test_list_api_keys(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_list_api_keys(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Test listing API keys."""
         # Create and login a user
         test_user = User(**self.get_test_user())
@@ -103,9 +99,7 @@ class TestApiKeyRoutes:
         assert "key" not in data[1]
 
     @pytest.mark.asyncio
-    async def test_get_specific_api_key(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_get_specific_api_key(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Test getting a specific API key."""
         # Create and login a user
         test_user = User(**self.get_test_user())
@@ -134,9 +128,7 @@ class TestApiKeyRoutes:
         assert "key" not in data  # Raw key should not be included in get
 
     @pytest.mark.asyncio
-    async def test_update_api_key(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_update_api_key(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Test updating an API key."""
         # Create and login a user
         test_user = User(**self.get_test_user())
@@ -165,9 +157,7 @@ class TestApiKeyRoutes:
         assert data["is_active"] is False
 
     @pytest.mark.asyncio
-    async def test_delete_api_key(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_delete_api_key(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Test deleting an API key."""
         # Create and login a user
         test_user = User(**self.get_test_user())
@@ -199,9 +189,7 @@ class TestApiKeyRoutes:
         assert get_response.status_code == status.HTTP_404_NOT_FOUND
 
     @pytest.mark.asyncio
-    async def test_cannot_access_others_api_keys(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_cannot_access_others_api_keys(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Test that a user cannot access another user's API keys."""
         # Create two users
         user1 = User(**self.get_test_user())
@@ -231,9 +219,7 @@ class TestApiKeyRoutes:
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
     @pytest.mark.asyncio
-    async def test_create_api_key_no_auth(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_create_api_key_no_auth(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Test creating an API key without authentication."""
         response = await client.post(
             API_KEY_ROUTE,
@@ -243,9 +229,7 @@ class TestApiKeyRoutes:
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     @pytest.mark.asyncio
-    async def test_update_nonexistent_api_key(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_update_nonexistent_api_key(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Test updating a non-existent API key."""
         # Create and login a user
         test_user = User(**self.get_test_user())
@@ -264,9 +248,7 @@ class TestApiKeyRoutes:
         assert response.json()["detail"] == "API key not found"
 
     @pytest.mark.asyncio
-    async def test_delete_nonexistent_api_key(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_delete_nonexistent_api_key(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Test deleting a non-existent API key."""
         # Create and login a user
         test_user = User(**self.get_test_user())
@@ -284,9 +266,7 @@ class TestApiKeyRoutes:
         assert response.json()["detail"] == "API key not found"
 
     @pytest.mark.asyncio
-    async def test_create_api_key_invalid_request(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_create_api_key_invalid_request(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Test creating an API key with invalid request data."""
         # Create and login a user
         test_user = User(**self.get_test_user())
@@ -314,9 +294,7 @@ class TestApiKeyRoutes:
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
     @pytest.mark.asyncio
-    async def test_update_api_key_invalid_request(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_update_api_key_invalid_request(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Test updating an API key with invalid request data."""
         # Create and login a user
         test_user = User(**self.get_test_user())
@@ -358,15 +336,10 @@ class TestApiKeyRoutes:
             headers={"Authorization": f"Bearer {token}"},
         )
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
-        assert (
-            "At least one field must be provided for update"
-            in response.json()["detail"]
-        )
+        assert "At least one field must be provided for update" in response.json()["detail"]
 
     @pytest.mark.asyncio
-    async def test_update_api_key_update_failure(
-        self, client: AsyncClient, test_db: AsyncSession, mocker
-    ) -> None:
+    async def test_update_api_key_update_failure(self, client: AsyncClient, test_db: AsyncSession, mocker) -> None:
         """Test updating an API key when the update operation fails."""
         # Create and login a user
         test_user = User(**self.get_test_user())
@@ -396,9 +369,7 @@ class TestApiKeyRoutes:
         assert response.json()["detail"] == "API key not found"
 
     @pytest.mark.asyncio
-    async def test_admin_can_list_user_api_keys(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_admin_can_list_user_api_keys(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Test that an admin can list another user's API key."""
         # Create a regular user and an admin
         regular_user = User(**self.get_test_user(email="regular@test.com"))
@@ -437,9 +408,7 @@ class TestApiKeyRoutes:
         assert "key" not in data[1]
 
     @pytest.mark.asyncio
-    async def test_admin_can_update_user_api_key(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_admin_can_update_user_api_key(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Test that an admin can update another user's API key."""
         # Create a regular user and an admin
         regular_user = User(**self.get_test_user(email="regular@test.com"))
@@ -473,9 +442,7 @@ class TestApiKeyRoutes:
         assert data["is_active"] is False
 
     @pytest.mark.asyncio
-    async def test_admin_can_delete_user_api_key(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_admin_can_delete_user_api_key(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Test that an admin can delete another user's API key."""
         # Create a regular user and an admin
         regular_user = User(**self.get_test_user(email="regular@test.com"))
@@ -558,9 +525,7 @@ class TestApiKeyRoutes:
         assert delete_response.status_code == status.HTTP_403_FORBIDDEN
 
     @pytest.mark.asyncio
-    async def test_admin_update_key_wrong_user(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_admin_update_key_wrong_user(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Test admin trying to update a key with wrong user ID."""
         # Create two regular users and an admin
         user1 = User(**self.get_test_user(email="user1@test.com"))
@@ -594,9 +559,7 @@ class TestApiKeyRoutes:
         assert response.json()["detail"] == "API key not found"
 
     @pytest.mark.asyncio
-    async def test_admin_update_key_no_fields(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_admin_update_key_no_fields(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Test admin trying to update a key without providing any fields."""
         # Create a regular user and an admin
         regular_user = User(**self.get_test_user(email="regular@test.com"))
@@ -625,15 +588,10 @@ class TestApiKeyRoutes:
         )
 
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
-        assert (
-            response.json()["detail"]
-            == "At least one field must be provided for update"
-        )
+        assert response.json()["detail"] == "At least one field must be provided for update"
 
     @pytest.mark.asyncio
-    async def test_admin_delete_key_wrong_user(
-        self, client: AsyncClient, test_db: AsyncSession
-    ) -> None:
+    async def test_admin_delete_key_wrong_user(self, client: AsyncClient, test_db: AsyncSession) -> None:
         """Test admin trying to delete a key with wrong user ID."""
         # Create two regular users and an admin
         user1 = User(**self.get_test_user(email="user1@test.com"))
@@ -666,9 +624,7 @@ class TestApiKeyRoutes:
         assert response.json()["detail"] == "API key not found"
 
     @pytest.mark.asyncio
-    async def test_admin_update_key_update_failure(
-        self, client: AsyncClient, test_db: AsyncSession, mocker
-    ) -> None:
+    async def test_admin_update_key_update_failure(self, client: AsyncClient, test_db: AsyncSession, mocker) -> None:
         """Test admin updating an API key when the update operation fails."""
         # Create a regular user and an admin
         regular_user = User(**self.get_test_user(email="regular@test.com"))

@@ -41,9 +41,7 @@ class TestCLIKeys:
         mock_exists.assert_called_once()
         mock_touch.assert_called_once()
         mock_token.assert_called_once_with(32)
-        mock_set_key.assert_called_once_with(
-            Path(".env"), "SECRET_KEY", "mock_secret_key"
-        )
+        mock_set_key.assert_called_once_with(Path(".env"), "SECRET_KEY", "mock_secret_key")
         mock_confirm.assert_called_once()
 
     def test_secret_key_generation_env_exists(self, runner: CliRunner, mocker) -> None:
@@ -69,14 +67,10 @@ class TestCLIKeys:
         mock_exists.assert_called_once()
         mock_touch.assert_not_called()
         mock_token.assert_called_once_with(32)
-        mock_set_key.assert_called_once_with(
-            Path(".env"), "SECRET_KEY", "mock_secret_key"
-        )
+        mock_set_key.assert_called_once_with(Path(".env"), "SECRET_KEY", "mock_secret_key")
         mock_confirm.assert_called_once()
 
-    def test_secret_key_generation_user_declines(
-        self, runner: CliRunner, mocker
-    ) -> None:
+    def test_secret_key_generation_user_declines(self, runner: CliRunner, mocker) -> None:
         """Test secret key generation when user declines to update .env."""
         # Mock the necessary functions
         mock_exists = mocker.patch.object(Path, "exists", return_value=True)
@@ -167,9 +161,7 @@ class TestCLIKeys:
         )
         mock_confirm.assert_called_once()
 
-    def test_admin_key_generation_user_declines(
-        self, runner: CliRunner, mocker
-    ) -> None:
+    def test_admin_key_generation_user_declines(self, runner: CliRunner, mocker) -> None:
         """Test admin key generation when user declines to update .env."""
         # Mock the necessary functions
         mock_exists = mocker.patch.object(Path, "exists", return_value=True)

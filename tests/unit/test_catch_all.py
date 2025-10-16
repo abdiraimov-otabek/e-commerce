@@ -16,6 +16,4 @@ def test_catch_all() -> None:
         catch_all()
 
     assert exc.value.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
-    assert exc.value.detail == (
-        "ERROR: Cannot connect to the database! Have you set it up properly?"
-    )
+    assert exc.value.detail == ("ERROR: Cannot connect to the database! Have you set it up properly?")

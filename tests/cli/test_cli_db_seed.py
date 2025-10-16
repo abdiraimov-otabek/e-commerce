@@ -181,9 +181,7 @@ class TestValidateCsvFile:
         with csv_file.open("w", encoding="utf-8") as f:
             writer = csv.writer(f)
             writer.writerow(["email", "password", "first_name", "last_name", "role"])
-            writer.writerow(
-                ["test@example.com", "Password123!", "Test", "User", "user"]
-            )
+            writer.writerow(["test@example.com", "Password123!", "Test", "User", "user"])
 
         # Validate the CSV file
         rows = _validate_csv_file(csv_file)
@@ -202,9 +200,7 @@ class TestValidateCsvFile:
         csv_file = tmp_path / "no_header.csv"
         with csv_file.open("w", encoding="utf-8") as f:
             writer = csv.writer(f)
-            writer.writerow(
-                ["test@example.com", "Password123!", "Test", "User", "user"]
-            )
+            writer.writerow(["test@example.com", "Password123!", "Test", "User", "user"])
 
         # Validate the CSV file and expect an error
         with pytest.raises(typer.Exit, match="1"):
@@ -266,9 +262,7 @@ class TestSeedUsersFromCsv:
         mocker.patch("app.commands.db.async_session", return_value=session_mock)
 
         # Mock UserManager.register
-        user_manager_mock = mocker.patch(
-            "app.commands.db.UserManager.register", return_value=None
-        )
+        user_manager_mock = mocker.patch("app.commands.db.UserManager.register", return_value=None)
 
         # Run the function
         await _seed_users_from_csv(Path("dummy.csv"))
@@ -320,9 +314,7 @@ class TestSeedUsersFromCsv:
         # Mock UserManager.register to raise HTTPException for duplicate email
         user_manager_mock = mocker.patch(
             "app.commands.db.UserManager.register",
-            side_effect=HTTPException(
-                status_code=400, detail=ErrorMessages.EMAIL_EXISTS
-            ),
+            side_effect=HTTPException(status_code=400, detail=ErrorMessages.EMAIL_EXISTS),
         )
 
         # Run the function

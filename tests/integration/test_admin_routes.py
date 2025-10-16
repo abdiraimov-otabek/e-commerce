@@ -67,9 +67,7 @@ class TestAdminAuth:
         assert "Username" in response.text
         assert "Password" in response.text
 
-    async def test_admin_login_ok(
-        self, client: AsyncClient, test_db: AsyncSession, mocker
-    ) -> None:
+    async def test_admin_login_ok(self, client: AsyncClient, test_db: AsyncSession, mocker) -> None:
         """Test that the admin login page works with valid credentials."""
         admin_user = User(**self.get_test_user(admin=True))
         test_db.add(admin_user)
@@ -208,9 +206,7 @@ class TestAdminAuth:
         assert response.status_code == status.HTTP_200_OK
         assert "admin/login" in str(response.url)
 
-    async def test_banned_admin_redirects_to_login(
-        self, client: AsyncClient, test_db: AsyncSession, mocker
-    ) -> None:
+    async def test_banned_admin_redirects_to_login(self, client: AsyncClient, test_db: AsyncSession, mocker) -> None:
         """Test if a valid admin is downgraded, it redirects to login."""
         admin_user = User(**self.get_test_user(admin=True))
         test_db.add(admin_user)
@@ -248,9 +244,7 @@ class TestAdminAuth:
         assert response.status_code == status.HTTP_200_OK
         assert "admin/login" in str(response.url)
 
-    async def test_non_admin_login_fails(
-        self, client: AsyncClient, test_db: AsyncSession, mocker
-    ) -> None:
+    async def test_non_admin_login_fails(self, client: AsyncClient, test_db: AsyncSession, mocker) -> None:
         """Test that a non-admin user cannot login to the admin interface."""
         plain_user = User(**self.get_test_user())
         test_db.add(plain_user)
@@ -316,9 +310,7 @@ class TestAdminAuth:
         assert "admin/login" in str(response.url)
         assert response.cookies.get("token") is None
 
-    async def test_protected_routes_redirect_to_login_if_no_auth(
-        self, client: AsyncClient
-    ) -> None:
+    async def test_protected_routes_redirect_to_login_if_no_auth(self, client: AsyncClient) -> None:
         """Ensure protected routes redirect to login when not authenticated."""
         routes = [
             "/admin/user/list",

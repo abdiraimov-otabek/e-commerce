@@ -21,12 +21,8 @@ class UserSearchParams(BaseModel):
     """Parameters for searching users."""
 
     search_term: str = Field(..., min_length=1, description="Term to search for")
-    field: SearchField = Field(
-        default=SearchField.ALL, description="Field to search in"
-    )
-    exact_match: bool = Field(
-        default=False, description="Whether to perform exact matching"
-    )
+    field: SearchField = Field(default=SearchField.ALL, description="Field to search in")
+    exact_match: bool = Field(default=False, description="Whether to perform exact matching")
 
 
 class UserRegisterRequest(UserBase):

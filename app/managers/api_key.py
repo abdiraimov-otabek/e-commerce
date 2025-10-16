@@ -109,9 +109,7 @@ class ApiKeyManager:
             await session.flush()
 
     @classmethod
-    async def validate_key(
-        cls, raw_key: str, session: AsyncSession
-    ) -> Optional[ApiKey]:
+    async def validate_key(cls, raw_key: str, session: AsyncSession) -> Optional[ApiKey]:
         """Validate an API key and return the associated API key object."""
         if not raw_key.startswith(cls.KEY_PREFIX):
             return None
@@ -132,9 +130,7 @@ class ApiKeyAuth:
         """Initialize the auth handler."""
         self.auto_error = auto_error
 
-    async def __call__(
-        self, request: Request, db: AsyncSession = Depends(get_database)
-    ) -> Optional[User]:
+    async def __call__(self, request: Request, db: AsyncSession = Depends(get_database)) -> Optional[User]:
         """Validate API key and return the associated user."""
         api_key = request.headers.get("X-API-Key")
         if not api_key:

@@ -75,21 +75,15 @@ async def get_all_users_(session: AsyncSession) -> Sequence[User]:
     return result.scalars().all()
 
 
-async def add_new_user_(
-    user_data: dict[str, Any], session: AsyncSession
-) -> Optional[User]:
+async def add_new_user_(user_data: dict[str, Any], session: AsyncSession) -> Optional[User]:
     """Add a new user to the database."""
     result = await session.execute(insert(User).values(user_data).returning(User))
     return result.scalar_one()
 
 
-async def add_new_api_key_(
-    api_key_data: dict[str, Any], session: AsyncSession
-) -> Optional[ApiKey]:
+async def add_new_api_key_(api_key_data: dict[str, Any], session: AsyncSession) -> Optional[ApiKey]:
     """Add a new API key to the database."""
-    result = await session.execute(
-        insert(ApiKey).values(api_key_data).returning(ApiKey)
-    )
+    result = await session.execute(insert(ApiKey).values(api_key_data).returning(ApiKey))
     api_key = result.scalar_one()
     await session.flush()
     return api_key
@@ -101,9 +95,7 @@ async def update_api_key_(
     session: AsyncSession,
 ) -> Optional[ApiKey]:
     """Update an API key in the database."""
-    result = await session.execute(
-        update(ApiKey).where(ApiKey.id == key_id).values(update_data).returning(ApiKey)
-    )
+    result = await session.execute(update(ApiKey).where(ApiKey.id == key_id).values(update_data).returning(ApiKey))
     api_key = result.scalar_one_or_none()
     if api_key:
         await session.flush()
@@ -115,9 +107,7 @@ async def get_api_key_by_id_(key_id: UUID, session: AsyncSession) -> Optional[Ap
     return await session.get(ApiKey, key_id)
 
 
-async def get_api_key_by_hash_(
-    key_hash: str, session: AsyncSession
-) -> Optional[ApiKey]:
+async def get_api_key_by_hash_(key_hash: str, session: AsyncSession) -> Optional[ApiKey]:
     """Return an API key by its hash."""
     result = await session.execute(select(ApiKey).where(ApiKey.key == key_hash))
     return result.scalar_one_or_none()

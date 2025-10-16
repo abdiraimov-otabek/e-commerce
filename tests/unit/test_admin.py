@@ -111,9 +111,7 @@ class TestAdminAuth:
     def auth_backend(self, mocker) -> AdminAuth:
         """Create an AdminAuth instance for testing."""
         mock_settings = mocker.patch("app.admin.auth.get_settings")
-        mock_settings.return_value.admin_pages_encryption_key = (
-            "VZaGj3U1NiIxMjM0NTY3ODkwMTIzNDU2Nzg5MDEyMzQ="
-        )
+        mock_settings.return_value.admin_pages_encryption_key = "VZaGj3U1NiIxMjM0NTY3ODkwMTIzNDU2Nzg5MDEyMzQ="
         mock_settings.return_value.admin_pages_timeout = 3600
         return AdminAuth(secret_key="test_key")  # noqa: S106
 

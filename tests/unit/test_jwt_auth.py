@@ -31,13 +31,9 @@ class TestJWTAuth:
         token, _ = await UserManager.register(self.test_user, test_db)
         mock_req = mocker.patch(self.mock_request_path)
         mock_req.headers = {"Authorization": f"Bearer {token}"}
-        mock_credentials = HTTPAuthorizationCredentials(
-            scheme="Bearer", credentials=token
-        )
+        mock_credentials = HTTPAuthorizationCredentials(scheme="Bearer", credentials=token)
 
-        result = await get_jwt_user(
-            request=mock_req, db=test_db, credentials=mock_credentials
-        )
+        result = await get_jwt_user(request=mock_req, db=test_db, credentials=mock_credentials)
 
         assert isinstance(result, User)
         assert result.email == self.test_user["email"]
@@ -47,14 +43,10 @@ class TestJWTAuth:
         """Test with an invalid token."""
         mock_req = mocker.patch(self.mock_request_path)
         mock_req.headers = {"Authorization": "Bearer badtoken"}
-        mock_credentials = HTTPAuthorizationCredentials(
-            scheme="Bearer", credentials="badtoken"
-        )
+        mock_credentials = HTTPAuthorizationCredentials(scheme="Bearer", credentials="badtoken")
 
         with pytest.raises(HTTPException) as exc:
-            await get_jwt_user(
-                request=mock_req, db=test_db, credentials=mock_credentials
-            )
+            await get_jwt_user(request=mock_req, db=test_db, credentials=mock_credentials)
 
         assert exc.value.status_code == status.HTTP_401_UNAUTHORIZED
         assert exc.value.detail == ResponseMessages.INVALID_TOKEN
@@ -74,14 +66,10 @@ class TestJWTAuth:
 
         mock_req = mocker.patch(self.mock_request_path)
         mock_req.headers = {"Authorization": f"Bearer {token}"}
-        mock_credentials = HTTPAuthorizationCredentials(
-            scheme="Bearer", credentials=token
-        )
+        mock_credentials = HTTPAuthorizationCredentials(scheme="Bearer", credentials=token)
 
         with pytest.raises(HTTPException) as exc:
-            await get_jwt_user(
-                request=mock_req, db=test_db, credentials=mock_credentials
-            )
+            await get_jwt_user(request=mock_req, db=test_db, credentials=mock_credentials)
 
         assert exc.value.status_code == status.HTTP_401_UNAUTHORIZED
         assert exc.value.detail == ResponseMessages.INVALID_TOKEN
@@ -89,21 +77,15 @@ class TestJWTAuth:
     async def test_jwt_auth_unverified_user(self, test_db, mocker) -> None:
         """Test with an unverified user."""
         background_tasks = BackgroundTasks()
-        token, _ = await UserManager.register(
-            self.test_user, test_db, background_tasks=background_tasks
-        )
+        token, _ = await UserManager.register(self.test_user, test_db, background_tasks=background_tasks)
         await UserManager.set_ban_status(1, 666, test_db, banned=True)
 
         mock_req = mocker.patch(self.mock_request_path)
         mock_req.headers = {"Authorization": f"Bearer {token}"}
-        mock_credentials = HTTPAuthorizationCredentials(
-            scheme="Bearer", credentials=token
-        )
+        mock_credentials = HTTPAuthorizationCredentials(scheme="Bearer", credentials=token)
 
         with pytest.raises(HTTPException) as exc:
-            await get_jwt_user(
-                request=mock_req, db=test_db, credentials=mock_credentials
-            )
+            await get_jwt_user(request=mock_req, db=test_db, credentials=mock_credentials)
 
         assert exc.value.status_code == status.HTTP_401_UNAUTHORIZED
         assert exc.value.detail == ResponseMessages.INVALID_TOKEN
@@ -118,14 +100,10 @@ class TestJWTAuth:
 
         mock_req = mocker.patch(self.mock_request_path)
         mock_req.headers = {"Authorization": f"Bearer {expired_token}"}
-        mock_credentials = HTTPAuthorizationCredentials(
-            scheme="Bearer", credentials=expired_token
-        )
+        mock_credentials = HTTPAuthorizationCredentials(scheme="Bearer", credentials=expired_token)
 
         with pytest.raises(HTTPException) as exc:
-            await get_jwt_user(
-                request=mock_req, db=test_db, credentials=mock_credentials
-            )
+            await get_jwt_user(request=mock_req, db=test_db, credentials=mock_credentials)
 
         assert exc.value.status_code == status.HTTP_401_UNAUTHORIZED
         assert exc.value.detail == ResponseMessages.EXPIRED_TOKEN
